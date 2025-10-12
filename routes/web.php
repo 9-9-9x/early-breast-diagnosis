@@ -33,6 +33,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/deteksi-dini', [BreastExamController::class, 'index'])->name('deteksi-dini.index');
     Route::get('/deteksi-dini/create', [BreastExamController::class, 'create'])->name('deteksi-dini.create');
     Route::post('/deteksi-dini/create', [BreastExamController::class, 'store'])->name('deteksi-dini.store');
+    Route::get('/deteksi-dini/show', [BreastExamController::class, 'show'])->name('deteksi-dini.show');
 
     Route::get('/laporan', [ReportController::class, 'index'])->name('report.index');
 
