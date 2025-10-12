@@ -46,7 +46,6 @@ class BreastExamController extends Controller
     public function store(Request $request)
     {
         $user = User::find($request->input('user_id'));
-        dd($request->all());
 
         return redirect()->route('deteksi-dini.show', ['user_id' => $user->id])->with('success', 'Breast exam data saved successfully.');
     }

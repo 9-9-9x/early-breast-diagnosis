@@ -12,7 +12,7 @@
         </h1>
     </div>
 
-    <form method="POST" action="{{ route('deteksi-dini.store', ['user' => $user_id]) }}">
+    <form method="POST" action="{{ route('deteksi-dini.store', ['user_id' => $user_id]) }}">
         @csrf
 
         <div class="p-8">
