@@ -23,10 +23,12 @@
 
                 <div class="flex items-center gap-x-4">
                     <div class="text-right">
-                        <p class="text-xl font-medium text-black">Ranee Alleyda</p>
+                        <p class="text-xl font-medium text-black">{{ auth()->user()->name }}</p>
                         <p class="text-lg font-light text-gray-700">Admin</p>
                     </div>
-                    <img src="https://via.placeholder.com/58" alt="Profile User" class="w-14 h-14 rounded-full object-cover">
+
+                    <img src="{{ asset('profile.png') }}" alt="Logo Puskesmas" class="w-15 h-15 object-cover ">
+
                 </div>
             </div>
         </header>

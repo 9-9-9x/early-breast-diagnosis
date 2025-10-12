@@ -3,9 +3,12 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\BreastExamController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PatientProfileController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RiskFactorController;
+use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -26,6 +29,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/deteksi-dini', [BreastExamController::class, 'index'])->name('deteksi-dini.index');
+    Route::get('/deteksi-dini/create', [BreastExamController::class, 'create'])->name('deteksi-dini.create');
+    Route::post('/deteksi-dini/create', [BreastExamController::class, 'store'])->name('deteksi-dini.store');
+
+    Route::get('/laporan', [ReportController::class, 'index'])->name('report.index');
+
+    Route::get('/pengaturan', [SettingsController::class, 'edit'])->name('pengaturan.edit');
+    Route::post('/pengaturan', [SettingsController::class, 'update'])->name('pengaturan.update');
 });
 
 Route::get('/', function () {
