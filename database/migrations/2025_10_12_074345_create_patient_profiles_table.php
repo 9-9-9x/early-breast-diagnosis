@@ -11,22 +11,22 @@ return new class extends Migration
         Schema::create('patient_profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('nama');
-            $table->integer('umur');
+            $table->string('nama')->nullable();
+            $table->integer('umur')->nullable();
             $table->string('suku_bangsa')->nullable();
-            $table->string('agama');
-            $table->decimal('bb', 5, 2);
-            $table->decimal('tb', 5, 2);
-            $table->integer('jumlah_anak_kandung');
-            $table->string('nomor_telepon');
-            $table->text('alamat');
-            $table->string('rt');
-            $table->string('rw');
-            $table->string('desa_kelurahan');
-            $table->string('pendidikan_terakhir');
-            $table->string('pekerjaan_pasien');
+            $table->string('agama')->nullable();
+            $table->decimal('bb', 5, 2)->nullable();
+            $table->decimal('tb', 5, 2)->nullable();
+            $table->integer('jumlah_anak_kandung')->nullable();
+            $table->string('nomor_telepon')->nullable();
+            $table->text('alamat')->nullable();
+            $table->string('rt')->nullable();
+            $table->string('rw')->nullable();
+            $table->string('desa_kelurahan')->nullable();
+            $table->string('pendidikan_terakhir')->nullable();
+            $table->string('pekerjaan_pasien')->nullable();
             $table->string('pekerjaan_suami')->nullable();
-            $table->string('perkawinan_pasangan');
+            $table->string('perkawinan_pasangan')->nullable();
             $table->timestamps();
         });
     }

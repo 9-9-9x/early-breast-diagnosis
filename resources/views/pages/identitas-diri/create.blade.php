@@ -210,9 +210,6 @@
 
         {{-- Action Buttons - Visually outside, but functionally inside the form --}}
         <div class="w-full mx-auto flex flex-col sm:flex-row justify-end items-center gap-4 px-4 sm:px-0">
-            <a href="{{-- route('identitas-diri.index') --}}" class="flex items-center justify-center w-full sm:w-48 h-16 rounded-xl border border-[#3e7b27] text-black font-semibold text-2xl hover:bg-gray-100 transition shadow-md">
-                BATAL
-            </a>
             <button type="submit" class="w-full sm:w-48 h-16 rounded-xl bg-[#3e7b27] text-white font-semibold text-2xl hover:bg-opacity-90 transition shadow-md">
                 SIMPAN
             </button>
