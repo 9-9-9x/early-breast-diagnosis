@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PatientProfile;
 use Illuminate\Http\Request;
 
 class BreastExamController extends Controller
@@ -9,9 +10,22 @@ class BreastExamController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('pages.deteksi-dini.index');
+        $search = $request->input('search');
+        $query = PatientProfile::query();
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama', 'like', '%' . $search . '%')
+                    ->orWhere('umur', 'like', '%' . $search . '%')
+                    ->orWhere('nomor_telepon', 'like', '%' . $search . '%');
+            });
+        }
+
+        $patients = $query->latest()->paginate(10)->appends($request->all());
+
+        return view('pages.deteksi-dini.index', compact('patients'));
     }
 
     /**
@@ -19,6 +33,8 @@ class BreastExamController extends Controller
      */
     public function create()
     {
+
+
         return view('pages.deteksi-dini.create');
     }
 
