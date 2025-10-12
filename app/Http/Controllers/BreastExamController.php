@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BreastExam;
 use App\Models\PatientProfile;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class BreastExamController extends Controller
@@ -45,7 +47,42 @@ class BreastExamController extends Controller
      */
     public function store(Request $request)
     {
-        $user = User::find($request->input('user_id'));
+        $validatedData = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'payudara_kanan' => 'required|boolean',
+            'payudara_kiri' => 'required|boolean',
+            'kulit' => 'required|string|max:255',
+            'areola_papilla' => 'required|string|max:255',
+            // Validasi radio button 'benjolan_radio'
+            'benjolan_radio' => 'required|string|max:10|in:ya,tidak',
+            'benjolan_ukuran' => 'nullable|string|max:255',
+            // Validasi array checkbox 'kelainan'
+            'kelainan' => 'array', // Validasi bahwa input adalah array
+            'kelainan.*' => 'string|max:255|in:kenyal,keras,bergerak,tidak_bergerak', // Validasi setiap item dalam array
+        ]);
+
+        $user = User::findOrFail($request->input('user_id'));
+
+        // Proses data sebelum disimpan
+        $processedData = [
+            'user_id' => $user->id,
+            'payudara_kanan' => $validatedData['payudara_kanan'],
+            'payudara_kiri' => $validatedData['payudara_kiri'],
+            'kulit' => $validatedData['kulit'],
+            'areola_papilla' => $validatedData['areola_papilla'],
+            // Set benjolan_tidak dan benjolan_ya berdasarkan nilai radio button
+            'benjolan_tidak' => $validatedData['benjolan_radio'] === 'tidak',
+            'benjolan_ya' => $validatedData['benjolan_radio'] === 'ya',
+            'benjolan_ukuran' => $validatedData['benjolan_ukuran'],
+            // Gabungkan array 'kelainan' menjadi string 'bentuk_kelainan'
+            'bentuk_kelainan' => $request->input('kelainan') ? implode(',', $request->input('kelainan')) : null,
+        ];
+
+        DB::transaction(function () use ($processedData) {
+            BreastExam::create($processedData);
+        });
+
+        Log::info('BreastExam created successfully', ['user_id' => $user->id]);
 
         return redirect()->route('deteksi-dini.show', ['user_id' => $user->id])->with('success', 'Breast exam data saved successfully.');
     }
@@ -65,7 +102,6 @@ class BreastExamController extends Controller
                 return redirect($redirectUrl)->with('success', 'gas isi');
             }
         }
-
 
         return view('pages.deteksi-dini.show');
     }
