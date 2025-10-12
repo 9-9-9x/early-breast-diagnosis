@@ -20,6 +20,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/identitas-diri', [PatientProfileController::class, 'store'])->name('identitas-diri.store');
     Route::get('/faktor-risiko', [RiskFactorController::class, 'create'])->name('faktor-risiko.create');
     Route::post('/faktor-risiko', [RiskFactorController::class, 'store'])->name('faktor-risiko.store');
+    Route::get('/faktor-risiko/show', [RiskFactorController::class, 'show'])->name('faktor-risiko.show');
 
     Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
     Route::post('/register', [RegisterController::class, 'register']);

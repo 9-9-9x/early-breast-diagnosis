@@ -12,9 +12,7 @@ class RiskFactorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-    }
+    public function index() {}
 
     /**
      * Show the form for creating a new resource.
@@ -99,9 +97,9 @@ class RiskFactorController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show()
     {
-        //
+        return view('pages.faktor-resiko.show');
     }
 
     /**
