@@ -1,4 +1,5 @@
 #!/bin/bash
+
 cd /var/www/early-breast-diagnosis || exit
 git pull origin main
 composer install --no-dev --optimize-autoloader
