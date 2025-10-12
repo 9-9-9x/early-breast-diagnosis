@@ -19,7 +19,7 @@ class BreastExamController extends Controller
      */
     public function create()
     {
-        //
+        return view('pages.deteksi-dini.create');
     }
 
     /**
