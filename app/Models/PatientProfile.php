@@ -1,4 +1,3 @@
-// app/Models/PatientProfile.php
 <?php
 
 namespace App\Models;

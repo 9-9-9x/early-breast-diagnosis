@@ -15,8 +15,8 @@ Route::middleware('guest')->group(function () {
 
     Route::get('/identitas-diri', [PatientProfileController::class, 'create'])->name('identitas-diri.create');
     Route::post('/identitas-diri', [PatientProfileController::class, 'store'])->name('identitas-diri.store');
-    Route::get('/faktor-risiko/{user_id}', [RiskFactorController::class, 'create'])->name('faktor-risiko.create');
-    Route::post('/faktor-risiko/{user_id}', [RiskFactorController::class, 'store'])->name('faktor-risiko.store');
+    Route::get('/faktor-risiko', [RiskFactorController::class, 'create'])->name('faktor-risiko.create');
+    Route::post('/faktor-risiko', [RiskFactorController::class, 'store'])->name('faktor-risiko.store');
 
     Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
     Route::post('/register', [RegisterController::class, 'register']);

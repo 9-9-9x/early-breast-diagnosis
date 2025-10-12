@@ -5,17 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\PatientProfile;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log; // Add this import
 
 class PatientProfileController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
     /**
      * Show the form for creating a new resource.
      */
@@ -29,6 +24,8 @@ class PatientProfileController extends Controller
      */
     public function store(Request $request)
     {
+        Log::info('PatientProfileController@store called');
+
         $validatedData = $request->validate([
             'nama' => 'required|string|max:255',
             'umur' => 'required|integer|min:0',
@@ -48,15 +45,19 @@ class PatientProfileController extends Controller
             'status_perkawinan' => 'required|string|max:255',
         ]);
 
-        // Declare $user variable in the outer scope so it's accessible after the transaction
+        Log::info('Validation passed', $validatedData);
+
         $user = null;
 
-        $patientProfile = DB::transaction(function () use ($validatedData, &$user) { // Pass $user by reference (&$user)
+        $patientProfile = DB::transaction(function () use ($validatedData, &$user) {
+            Log::info('Starting transaction');
             $user = User::create([
                 'name' => $validatedData['nama'],
                 'email' => $validatedData['telepon'] . '@example.com',
                 'password' => bcrypt('12345'),
             ]);
+
+            Log::info('User created', ['user_id' => $user->id]);
 
             $profileData = [
                 'user_id' => $user->id,
@@ -75,45 +76,20 @@ class PatientProfileController extends Controller
                 'pendidikan_terakhir' => $validatedData['pendidikan'],
                 'pekerjaan_pasien' => $validatedData['pekerjaan_pasien'],
                 'pekerjaan_suami' => $validatedData['pekerjaan_suami'],
-                'perkawinan_pasien' => $validatedData['status_perkawinan'],
+                'perkawinan_pasangan' => $validatedData['status_perkawinan'],
             ];
 
-            return PatientProfile::create($profileData);
+            $profile = PatientProfile::create($profileData);
+            Log::info('PatientProfile created', ['profile_id' => $profile->id]);
+            return $profile;
         });
 
-        // Now $user is accessible here because it was passed by reference into the transaction closure
-        return redirect()->route('faktor-risiko.create', ['user_id' => $user->id])->with('success', 'Identitas Diri berhasil disimpan. Silakan lanjutkan ke Faktor Risiko.');
-    }
+        Log::info('Transaction completed, redirecting', ['user_id' => $user->id]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        // Ensure the route name matches your updated route file
+        $redirectUrl = route('faktor-risiko.create', ['user_id' => $user->id]);
+        Log::info('Generated redirect URL', ['url' => $redirectUrl]);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return redirect($redirectUrl)->with('success', 'Identitas Diri berhasil disimpan. Silakan lanjutkan ke Faktor Risiko.');
     }
 }

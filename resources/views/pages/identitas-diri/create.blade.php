@@ -21,6 +21,25 @@
                 <h1 class="text-2xl md:text-3xl font-semibold text-center text-black">
                     Identitas Diri
                 </h1>
+
+                {{-- Display validation errors --}}
+                @if ($errors->any())
+                    <div class="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+                        <ul class="list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                {{-- Display success messages --}}
+                @if (session('success'))
+                    <div class="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
             </div>
 
             <div class="p-6 sm:p-8">
