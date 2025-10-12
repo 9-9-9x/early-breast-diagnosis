@@ -7,11 +7,6 @@
         <link href="css/style.css" rel="stylesheet">
     </head>
     <body>
-<form method="POST" action="{{ route('logout') }}">
-    @csrf
-    <button type="submit" class="bg-transparent text-gray-700 hover:text-black hover:underline focus:outline-none">
-        Logout
-    </button>
-</form>
+        @dump('kontol')
     </body>
 </html>

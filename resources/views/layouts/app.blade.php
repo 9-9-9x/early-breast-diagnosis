@@ -8,6 +8,6 @@
         @vite('resources/css/app.css')
     </head>
     <body>
-        {{ $slot }}
+        @yield('content')
     </body>
 </html>
