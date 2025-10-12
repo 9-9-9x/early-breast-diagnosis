@@ -12,7 +12,7 @@
         </h1>
     </div>
 
-    <form method="POST" action="{{-- route('pemeriksaan.store') --}}">
+    <form method="POST" action="{{ route('deteksi-dini.store', ['user' => $user_id]) }}">
         @csrf
 
         <div class="p-8">
@@ -107,9 +107,6 @@
 
         {{-- Action Buttons --}}
         <div class="p-6 flex justify-end items-center gap-4 border-t">
-            <button type="button" class="w-full sm:w-auto h-14 px-10 rounded-xl border border-[#3e7b27] text-black font-semibold text-2xl hover:bg-gray-100 transition shadow-sm">
-                KEMBALI
-            </button>
             <button type="submit" class="w-full sm:w-auto h-14 px-10 rounded-xl bg-[#3e7b27] text-white font-semibold text-2xl hover:bg-opacity-90 transition shadow-sm">
                 SIMPAN
             </button>

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\PatientProfile;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class BreastExamController extends Controller
 {
@@ -31,10 +33,11 @@ class BreastExamController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
+        $user_id = $request->input('user_id');
 
-        return view('pages.deteksi-dini.create');
+        return view('pages.deteksi-dini.create', compact('user_id'));
     }
 
     /**
@@ -42,7 +45,10 @@ class BreastExamController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = User::find($request->input('user_id'));
+        dd($request->all());
+
+        return redirect()->route('deteksi-dini.show', ['user_id' => $user->id])->with('success', 'Breast exam data saved successfully.');
     }
 
     /**
@@ -50,12 +56,17 @@ class BreastExamController extends Controller
      */
     public function show(Request $request)
     {
-        dd($request->all());
-        // if()
+        $user_id = $request->input('user_id');
 
-        // $redirectUrl = route('faktor-risiko.create', ['user_id' => $user->id]);
-        // Log::info('Generated redirect URL', ['url' => $redirectUrl]);
-        // return redirect($redirectUrl)->with('success', 'Identitas Diri berhasil disimpan. Silakan lanjutkan ke Faktor Risiko.');
+        if ($user_id) {
+            $user = User::find($user_id);
+            if (!$user->breastExam()->exists()) {
+                $redirectUrl = route('deteksi-dini.create', ['user_id' => $user->id]);
+                Log::info('Generated redirect URL', ['url' => $redirectUrl]);
+                return redirect($redirectUrl)->with('success', 'gas isi');
+            }
+        }
+
 
         return view('pages.deteksi-dini.show');
     }

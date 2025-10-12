@@ -14,7 +14,6 @@ class RiskFactorController extends Controller
      */
     public function index()
     {
-        //
     }
 
     /**
@@ -22,17 +21,14 @@ class RiskFactorController extends Controller
      */
     public function create(Request $request)
     {
-        // Get the user_id from the query string parameter
         $user_id = $request->query('user_id');
 
-        // Validate that user_id exists and fetch the user
         if (!$user_id) {
             abort(404, 'User ID is missing.');
         }
 
-        $user = User::findOrFail($user_id); // This will 404 if user doesn't exist
+        $user = User::findOrFail($user_id);
 
-        // You can pass the user to the view if needed (e.g., to display their name)
         return view('pages.faktor-resiko.create', compact('user'));
     }
 
@@ -41,11 +37,7 @@ class RiskFactorController extends Controller
      */
     public function store(Request $request)
     {
-        // Check if the request contains the expected user_id (indicating it's from the faktor risiko form)
-        // This helps prevent validation errors if the store method is called unintentionally
-        // by a different route (e.g., due to route resource conflict with '/deteksi-dini')
         if ($request->has('user_id')) {
-            // Validate the incoming request data only if user_id is present
             $validatedData = $request->validate([
                 'user_id' => 'required|exists:users,id',
 
@@ -62,10 +54,10 @@ class RiskFactorController extends Controller
                 'pernah_menyusui' => 'required|boolean',
                 'pernah_melahirkan' => 'required|boolean',
                 'melahirkan_lebih_4_kali' => 'required|boolean',
-                'riwayat_tumor_jinak' => 'required|boolean', // Use view name
-                'menopause_lebih_50' => 'required|boolean',  // Use view name
-                'obesitas' => 'required|boolean',            // Use view name
-                'pil_kb_lebih_5_tahun' => 'required|boolean', // Use view name
+                'riwayat_tumor_jinak' => 'required|boolean',
+                'menopause_lebih_50' => 'required|boolean',
+                'obesitas' => 'required|boolean',
+                'pil_kb_lebih_5_tahun' => 'required|boolean',
                 'suntik_kb_lebih_5_tahun' => 'required|boolean', // Use view name
             ]);
 
