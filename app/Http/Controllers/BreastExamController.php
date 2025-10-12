@@ -34,7 +34,6 @@ class BreastExamController extends Controller
     public function create()
     {
 
-
         return view('pages.deteksi-dini.create');
     }
 
@@ -51,6 +50,13 @@ class BreastExamController extends Controller
      */
     public function show(Request $request)
     {
+        dd($request->all());
+        // if()
+
+        // $redirectUrl = route('faktor-risiko.create', ['user_id' => $user->id]);
+        // Log::info('Generated redirect URL', ['url' => $redirectUrl]);
+        // return redirect($redirectUrl)->with('success', 'Identitas Diri berhasil disimpan. Silakan lanjutkan ke Faktor Risiko.');
+
         return view('pages.deteksi-dini.show');
     }
 

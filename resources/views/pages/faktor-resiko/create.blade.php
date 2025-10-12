@@ -3,7 +3,7 @@
 @section('title', 'Faktor Risiko')
 
 @push('scripts')
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js  "></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js    "></script>
 @endpush
 
 @section('content')
@@ -104,7 +104,7 @@
             </div>
 
             <div id="step-2" class="wizard-step hidden">
-                <div class="p-6 sm:p-8" x-data="{ kb_hormonal: '{{ old('kb_hormonal', '0') }}' }">
+                <div class="p-6 sm:p-8" x-data="{ kb_hormonal: '{{ old('kb_hormonal', '0') }}' }"> <!-- Alpine x-data -->
                      <div class="hidden md:flex justify-end items-center mb-4 px-4">
                         <div class="flex gap-x-8 text-xl font-medium text-center text-black">
                             <span class="w-14">Ya</span>
@@ -122,23 +122,29 @@
                             </div>
                         @endforeach
 
-                        <div class="border-b">
+                        <div class="border-b"> <!-- Seksi KB Hormonal -->
                             <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 py-4">
-                                <p class="text-xl md:text-2xl font-medium text-black">KB Hormonal {!! $requiredMark !!}</p>
+                                <p class="text-xl md:text-2xl font-medium text-black">KB Hormonal {!! $requiredMark !!}</p> <!-- Judul saja -->
                             </div>
 
-                            <div x-show="kb_hormonal === '1'" x-transition class="pl-4 md:pl-8 py-4 space-y-4">
+                            <!-- DIV INI DITAMPILKAN SECARA KONDISIONAL BERDASARKAN kb_hormonal -->
+                            <!-- KARENA kb_hormonal BUKAN SWITCHER, KITA HAPUS x-show -->
+                            <div x-transition class="pl-4 md:pl-8 py-4 space-y-4"> <!-- HAPUS x-show="kb_hormonal === '1'" -->
                                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 py-4 border-t">
-                                    <p class="text-xl md:text-2xl font-medium text-black">Pil > 5 Tahun</p>
+                                    <p class="text-xl md:text-2xl font-medium text-black">Pil > 5 Tahun</p> <!-- Label -->
                                     <div class="flex items-center gap-x-8 w-full md:w-auto">
+                                        <!-- Radio "Ya" untuk Pil > 5 Tahun -->
                                         <div class="w-1/2 md:w-14"><input type="radio" name="pil_kb_lebih_5_tahun" id="pil_kb_lebih_5_tahun_yes" value="1" class="hidden peer" @checked(old('pil_kb_lebih_5_tahun') == '1')><label for="pil_kb_lebih_5_tahun_yes" class="{{ $radioLabelClasses }} {{ $radioPeerCheckedClasses }}"><span class="hidden peer-checked:block text-3xl">✅</span></label></div>
+                                        <!-- Radio "Tidak" untuk Pil > 5 Tahun -->
                                         <div class="w-1/2 md:w-14"><input type="radio" name="pil_kb_lebih_5_tahun" id="pil_kb_lebih_5_tahun_no" value="0" class="hidden peer" @checked(old('pil_kb_lebih_5_tahun') == '0')><label for="pil_kb_lebih_5_tahun_no" class="{{ $radioLabelClasses }} {{ $radioPeerCheckedClasses }}"><span class="hidden peer-checked:block text-3xl">✅</span></label></div>
                                     </div>
                                 </div>
                                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 py-4 border-t">
-                                    <p class="text-xl md:text-2xl font-medium text-black">Suntik > 5 Tahun</p>
+                                    <p class="text-xl md:text-2xl font-medium text-black">Suntik > 5 Tahun</p> <!-- Label -->
                                     <div class="flex items-center gap-x-8 w-full md:w-auto">
+                                        <!-- Radio "Ya" untuk Suntik > 5 Tahun -->
                                         <div class="w-1/2 md:w-14"><input type="radio" name="suntik_kb_lebih_5_tahun" id="suntik_kb_lebih_5_tahun_yes" value="1" class="hidden peer" @checked(old('suntik_kb_lebih_5_tahun') == '1')><label for="suntik_kb_lebih_5_tahun_yes" class="{{ $radioLabelClasses }} {{ $radioPeerCheckedClasses }}"><span class="hidden peer-checked:block text-3xl">✅</span></label></div>
+                                        <!-- Radio "Tidak" untuk Suntik > 5 Tahun -->
                                         <div class="w-1/2 md:w-14"><input type="radio" name="suntik_kb_lebih_5_tahun" id="suntik_kb_lebih_5_tahun_no" value="0" class="hidden peer" @checked(old('suntik_kb_lebih_5_tahun') == '0')><label for="suntik_kb_lebih_5_tahun_no" class="{{ $radioLabelClasses }} {{ $radioPeerCheckedClasses }}"><span class="hidden peer-checked:block text-3xl">✅</span></label></div>
                                     </div>
                                 </div>

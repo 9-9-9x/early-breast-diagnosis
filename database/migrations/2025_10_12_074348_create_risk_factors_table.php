@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('risk_factors', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+
             $table->boolean('pernah_menyusui')->default(false);
             $table->boolean('pernah_melahirkan')->default(false);
             $table->boolean('melahirkan_lebih_4_kali')->default(false);
@@ -19,6 +20,16 @@ return new class extends Migration
             $table->boolean('riwayat_tumor_jinak_payudara')->default(false);
             $table->boolean('menopause_lebih_50_tahun')->default(false);
             $table->boolean('obesitas_imt_lebih_27')->default(false);
+            $table->boolean('menstruasi_dini')->default(false);
+            $table->boolean('merokok')->default(false);
+            $table->boolean('terpapar_asap_rokok')->default(false);
+            $table->boolean('kurang_buah_sayur')->default(false);
+            $table->boolean('konsumsi_lemak')->default(false);
+            $table->boolean('konsumsi_pengawet')->default(false);
+            $table->boolean('kurang_aktivitas_fisik')->default(false);
+            $table->boolean('riwayat_keluarga')->default(false);
+            $table->boolean('kehamilan_pertama_tua')->default(false);
+
             $table->timestamps();
         });
     }
