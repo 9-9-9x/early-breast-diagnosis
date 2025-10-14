@@ -125,4 +125,6 @@ class RiskFactorController extends Controller
     {
         //
     }
+
+    public function detect() {}
 }

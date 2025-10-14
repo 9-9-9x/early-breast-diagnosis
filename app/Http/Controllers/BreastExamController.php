@@ -129,4 +129,6 @@ class BreastExamController extends Controller
     {
         //
     }
+
+    public function detect() {}
 }

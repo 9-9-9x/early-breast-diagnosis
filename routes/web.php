@@ -42,6 +42,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/pengaturan', [SettingsController::class, 'update'])->name('pengaturan.update');
 });
 
+Route::prefix('api')->name('api.')->group(function () {
+    Route::get('/risk-factors', [RiskFactorController::class, 'detect'])->name('risk-factors.detect');
+    Route::get('/breast-exam', [BreastExamController::class, 'detect'])->name('breast-exam.detect');
+});
+
 Route::get('/', function () {
     return view('welcome');
 });
