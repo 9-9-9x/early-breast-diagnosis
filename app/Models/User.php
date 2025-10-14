@@ -57,4 +57,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(BreastExam::class);
     }
+
+    public function riskFactorResult(): HasOne
+    {
+        return $this->hasOne(RiskFactorResult::class);
+    }
 }

@@ -4,17 +4,14 @@
 
 @section('content')
 
-{{--
-    CATATAN:
-    Tampilan halaman ini dikontrol oleh variabel `$isBerisiko` yang harus Anda kirim dari Controller.
-    Contoh di Controller:
-    return view('deteksi_dini.hasil_skrining', ['isBerisiko' => true]); // Untuk hasil "Berisiko"
---}}
-
 @php
-    // Baris ini hanya untuk testing. Hapus atau komentari jika sudah di-handle oleh Controller.
-    // Ubah nilainya ke `true` atau `false` untuk melihat kedua versi tampilan.
-    $isBerisiko = $isBerisiko ?? false;
+    // Tentukan apakah berisiko berdasarkan hasil prediksi dari API
+    $isBerisiko = false;
+    
+    if ($predictionResult && isset($predictionResult['result'])) {
+        // API return "Suspect" atau "Non-Suspect"
+        $isBerisiko = (strtolower($predictionResult['result']) == 'suspect');
+    }
 @endphp
 
 <div class="min-h-screen w-full bg-gradient-to-br from-white to-[#efe3c2] p-4 sm:p-6 lg:p-8 flex items-center justify-center">
@@ -29,7 +26,7 @@
             </h1>
         </div>
 
-        {{-- Card Body --}}
+        {{-- Card Body --}} 
         <div class="p-8 space-y-8">
 
             {{-- KOTAK HASIL ATAS (DINAMIS) --}}
@@ -71,11 +68,11 @@
         </div>
 
         {{-- Action Buttons (di dalam card) --}}
-        <div class="p-6 pt-0 flex justify-end items-center">
-            <a href="{{ route('deteksi-dini.index') }}" class="h-14 px-10 rounded-xl bg-[#3e7b27] text-white font-semibold text-2xl hover:bg-opacity-90 transition shadow-sm flex items-center justify-center">
-                Selesai
-            </a>
-        </div>
+       <div class="p-6 pt-0 flex justify-end items-center">
+    <a href="/" class="h-14 px-10 rounded-xl bg-[#3e7b27] text-white font-semibold text-2xl hover:bg-opacity-90 transition shadow-sm flex items-center justify-center">
+        Selesai
+    </a>
+</div>
     </div>
 </div>
 
