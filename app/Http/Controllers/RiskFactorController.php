@@ -139,14 +139,14 @@ class RiskFactorController extends Controller
                 'F17' => (int) $riskFactor->kb_hormonal_suntik_lebih_5_tahun,
             ];
 
-            $response = Http::timeout(30)->post('http://localhost:8001/predict', $features);
+            $response = Http::timeout(30)->post('http://129.212.208.190:8005/predict', $features);
 
             if ($response->successful()) {
                 $predictionResult = $response->json();
 
                 RiskFactorResult::create([
                     'user_id' => $user_id,
-                    'result' => $predictionResult['result'], 
+                    'result' => $predictionResult['result'],
                 ]);
             }
         } catch (\Exception $e) {
@@ -216,7 +216,7 @@ class RiskFactorController extends Controller
         ];
 
         try {
-            $response = Http::timeout(30)->post('http://localhost:8001/predict', $features);
+            $response = Http::timeout(30)->post('http://129.212.208.190:8005/predict', $features);
 
             Log::info('Response dari API:', $response->json());
 

@@ -20,8 +20,8 @@
         </button>
     </div>
 
-    <form method="POST" action="{{-- route('hasil.store') --}}">
-        @csrf
+   <form method="" action="{{ route('deteksi-dini.index') }}">
+    @csrf
         <div class="p-8">
             <div class="max-w-5xl mx-auto">
 
@@ -65,14 +65,14 @@
         </div>
 
         {{-- Action Buttons --}}
-        <div class="p-6 bg-gray-50 border-t flex justify-end items-center gap-4">
-            <a href="{{ url()->previous() }}" class="w-full sm:w-auto h-16 px-10 rounded-xl border border-[#3e7b27] text-black font-semibold text-2xl hover:bg-gray-100 transition shadow-sm flex items-center justify-center">
-                BATAL
-            </a>
-            <button type="submit" class="w-full sm:w-auto h-16 px-10 rounded-xl bg-[#3e7b27] text-white font-semibold text-2xl hover:bg-opacity-90 transition shadow-sm">
-                SIMPAN
-            </button>
-        </div>
+      <div class="p-6 bg-gray-50 border-t flex justify-end items-center gap-4">
+        <a href="{{ route('deteksi-dini.create', ['user_id' => $userId ?? session('user_id')]) }}" class="w-full sm:w-auto h-16 px-10 rounded-xl border border-[#3e7b27] text-black font-semibold text-2xl hover:bg-gray-100 transition shadow-sm flex items-center justify-center">
+            BATAL
+        </a>
+        <button type="submit" class="w-full sm:w-auto h-16 px-10 rounded-xl bg-[#3e7b27] text-white font-semibold text-2xl hover:bg-opacity-90 transition shadow-sm">
+            SIMPAN
+        </button>
+    </div>
     </form>
 </div>
 

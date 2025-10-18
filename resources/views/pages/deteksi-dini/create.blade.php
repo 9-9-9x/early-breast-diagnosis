@@ -31,9 +31,9 @@
 
     </div>
 
-    <form method="POST" action="{{ route('deteksi-dini.store', ['user_id' => $user_id]) }}">
-        @csrf
-        <input type="hidden" name="user_id" value="{{ $user_id }}">
+ <form method="POST" action="{{ route('deteksi-dini.store') }}">
+    @csrf
+    <input type="hidden" name="user_id" value="{{ $user_id }}">
 
         <div class="p-8">
 
@@ -67,34 +67,347 @@
                 @endphp
 
                 {{-- Baris Kulit --}}
-                <div class="{{ $formRowClasses }}">
-                    <label for="kulit" class="{{ $labelClasses }}">Kulit <span class="text-red-600">*</span></label>
-                    <div class="relative w-full max-w-md">
-                        <select id="kulit" name="kulit" class="{{ $inputClasses }} appearance-none bg-white text-gray-500">
-                            <option value="" {{ old('kulit') == '' ? 'selected' : '' }}>Pilih kondisi kulit</option>
-                            <option value="normal" {{ old('kulit') == 'normal' ? 'selected' : '' }}>Normal</option>
-                            <option value="abnormal" {{ old('kulit') == 'abnormal' ? 'selected' : '' }}>Abnormal</option>
-                        </select>
-                        <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
-                            <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </div>
-                    </div>
-                </div>
+<div class="{{ $formRowClasses }}" x-data="{ 
+    openKulit: false, 
+    selectedKulit: [],
+    kulitNormal: false,
+    kulitAbnormal: []
+}">
+    <label for="kulit" class="{{ $labelClasses }}">Kulit <span class="text-red-600">*</span></label>
+    <div class="relative w-full max-w-md">
+        <button type="button" 
+                @click="openKulit = !openKulit"
+                class="{{ $inputClasses }} appearance-none bg-white text-left flex justify-between items-center transition-all duration-200">
+            <span x-text="selectedKulit.length ? selectedKulit.join(', ') : 'Pilih kondisi kulit'" 
+                  class="truncate"
+                  :class="selectedKulit.length ? 'text-black' : 'text-gray-500'"></span>
+            <svg class="w-5 h-5 text-gray-700 flex-shrink-0 transition-transform duration-200" 
+                 :class="openKulit ? 'rotate-180' : ''"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+        </button>
+        
+        <div x-show="openKulit" 
+             x-transition:enter="transition ease-out duration-100"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-75"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-95"
+             @click.away="openKulit = false"
+             class="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-lg border border-gray-300 overflow-hidden"
+             style="display: none;">
+            
+            <!-- Normal Option -->
+            <label class="flex items-center px-4 py-2.5 hover:bg-gray-50 cursor-pointer transition-colors duration-150"
+                   :class="kulitAbnormal.length > 0 ? 'opacity-50 cursor-not-allowed' : ''"
+                   @click.stop>
+                <input type="checkbox" 
+                       name="kulit_normal" 
+                       value="1"
+                       :disabled="kulitAbnormal.length > 0"
+                       @change="
+                           if ($event.target.checked) {
+                               kulitNormal = true;
+                               kulitAbnormal = [];
+                               selectedKulit = ['Normal'];
+                           } else {
+                               kulitNormal = false;
+                               selectedKulit = selectedKulit.filter(i => i !== 'Normal');
+                           }
+                       "
+                       :checked="kulitNormal"
+                       class="w-4 h-4 mr-3 text-[#85a947] rounded focus:ring-2 focus:ring-[#85a947] focus:ring-offset-0 transition-all">
+                <span class="text-base">Normal</span>
+            </label>
+            
+            <!-- Abnormal Option -->
+            <label class="flex items-center px-4 py-2.5 hover:bg-gray-50 cursor-pointer border-t border-gray-100 transition-colors duration-150"
+                   :class="kulitNormal ? 'opacity-50 cursor-not-allowed' : ''"
+                   @click.stop>
+                <input type="checkbox" 
+                       name="kulit_abnormal" 
+                       value="1"
+                       :disabled="kulitNormal"
+                       @change="
+                           if ($event.target.checked) {
+                               kulitNormal = false;
+                               if (!kulitAbnormal.includes('Abnormal')) {
+                                   kulitAbnormal.push('Abnormal');
+                               }
+                               selectedKulit = selectedKulit.filter(i => i !== 'Normal');
+                               if (!selectedKulit.includes('Abnormal')) {
+                                   selectedKulit.push('Abnormal');
+                               }
+                           } else {
+                               kulitAbnormal = kulitAbnormal.filter(i => i !== 'Abnormal');
+                               selectedKulit = selectedKulit.filter(i => i !== 'Abnormal');
+                           }
+                       "
+                       :checked="kulitAbnormal.includes('Abnormal')"
+                       class="w-4 h-4 mr-3 text-[#85a947] rounded focus:ring-2 focus:ring-[#85a947] focus:ring-offset-0 transition-all">
+                <span class="text-base">Abnormal</span>
+            </label>
+            
+            <!-- Kulit Jeruk Option -->
+            <label class="flex items-center px-4 py-2.5 hover:bg-gray-50 cursor-pointer border-t border-gray-100 transition-colors duration-150"
+                   :class="kulitNormal ? 'opacity-50 cursor-not-allowed' : ''"
+                   @click.stop>
+                <input type="checkbox" 
+                       name="kulit_jeruk" 
+                       value="1"
+                       :disabled="kulitNormal"
+                       @change="
+                           if ($event.target.checked) {
+                               kulitNormal = false;
+                               if (!kulitAbnormal.includes('Kulit Jeruk')) {
+                                   kulitAbnormal.push('Kulit Jeruk');
+                               }
+                               selectedKulit = selectedKulit.filter(i => i !== 'Normal');
+                               if (!selectedKulit.includes('Kulit Jeruk')) {
+                                   selectedKulit.push('Kulit Jeruk');
+                               }
+                           } else {
+                               kulitAbnormal = kulitAbnormal.filter(i => i !== 'Kulit Jeruk');
+                               selectedKulit = selectedKulit.filter(i => i !== 'Kulit Jeruk');
+                           }
+                       "
+                       :checked="kulitAbnormal.includes('Kulit Jeruk')"
+                       class="w-4 h-4 mr-3 text-[#85a947] rounded focus:ring-2 focus:ring-[#85a947] focus:ring-offset-0 transition-all">
+                <span class="text-base">Kulit Jeruk</span>
+            </label>
+            
+            <!-- Penarikan Kulit Option -->
+            <label class="flex items-center px-4 py-2.5 hover:bg-gray-50 cursor-pointer border-t border-gray-100 transition-colors duration-150"
+                   :class="kulitNormal ? 'opacity-50 cursor-not-allowed' : ''"
+                   @click.stop>
+                <input type="checkbox" 
+                       name="penarikan_kulit" 
+                       value="1"
+                       :disabled="kulitNormal"
+                       @change="
+                           if ($event.target.checked) {
+                               kulitNormal = false;
+                               if (!kulitAbnormal.includes('Penarikan Kulit')) {
+                                   kulitAbnormal.push('Penarikan Kulit');
+                               }
+                               selectedKulit = selectedKulit.filter(i => i !== 'Normal');
+                               if (!selectedKulit.includes('Penarikan Kulit')) {
+                                   selectedKulit.push('Penarikan Kulit');
+                               }
+                           } else {
+                               kulitAbnormal = kulitAbnormal.filter(i => i !== 'Penarikan Kulit');
+                               selectedKulit = selectedKulit.filter(i => i !== 'Penarikan Kulit');
+                           }
+                       "
+                       :checked="kulitAbnormal.includes('Penarikan Kulit')"
+                       class="w-4 h-4 mr-3 text-[#85a947] rounded focus:ring-2 focus:ring-[#85a947] focus:ring-offset-0 transition-all">
+                <span class="text-base">Penarikan Kulit</span>
+            </label>
+            
+            <!-- Luka Basah Option -->
+            <label class="flex items-center px-4 py-2.5 hover:bg-gray-50 cursor-pointer border-t border-gray-100 transition-colors duration-150"
+                   :class="kulitNormal ? 'opacity-50 cursor-not-allowed' : ''"
+                   @click.stop>
+                <input type="checkbox" 
+                       name="luka_basah_kulit" 
+                       value="1"
+                       :disabled="kulitNormal"
+                       @change="
+                           if ($event.target.checked) {
+                               kulitNormal = false;
+                               if (!kulitAbnormal.includes('Luka Basah')) {
+                                   kulitAbnormal.push('Luka Basah');
+                               }
+                               selectedKulit = selectedKulit.filter(i => i !== 'Normal');
+                               if (!selectedKulit.includes('Luka Basah')) {
+                                   selectedKulit.push('Luka Basah');
+                               }
+                           } else {
+                               kulitAbnormal = kulitAbnormal.filter(i => i !== 'Luka Basah');
+                               selectedKulit = selectedKulit.filter(i => i !== 'Luka Basah');
+                           }
+                       "
+                       :checked="kulitAbnormal.includes('Luka Basah')"
+                       class="w-4 h-4 mr-3 text-[#85a947] rounded focus:ring-2 focus:ring-[#85a947] focus:ring-offset-0 transition-all">
+                <span class="text-base">Luka Basah</span>
+            </label>
+        </div>
+    </div>
+</div>
 
-                {{-- Baris Areola/Papilla --}}
-                <div class="{{ $formRowClasses }}">
-                    <label for="areola_papilla" class="{{ $labelClasses }}">Areola/Papilla <span class="text-red-600">*</span></label>
-                    <div class="relative w-full max-w-md">
-                        <select id="areola_papilla" name="areola_papilla" class="{{ $inputClasses }} appearance-none bg-white text-gray-500">
-                            <option value="" {{ old('areola_papilla') == '' ? 'selected' : '' }}>Pilih kondisi areola/papilla</option>
-                            <option value="normal" {{ old('areola_papilla') == 'normal' ? 'selected' : '' }}>Normal</option>
-                            <option value="abnormal" {{ old('areola_papilla') == 'abnormal' ? 'selected' : '' }}>Abnormal</option>
-                        </select>
-                        <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
-                            <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </div>
-                    </div>
-                </div>
+
+<!-- Baris Areola/Papilla -->
+<div class="{{ $formRowClasses }}" x-data="{ 
+    openAreola: false, 
+    selectedAreola: [],
+    areolaNormal: false,
+    areolaAbnormal: []
+}">
+    <label for="areola_papilla" class="{{ $labelClasses }}">Areola/Papilla <span class="text-red-600">*</span></label>
+    <div class="relative w-full max-w-md">
+        <button type="button" 
+                @click="openAreola = !openAreola"
+                class="{{ $inputClasses }} appearance-none bg-white text-left flex justify-between items-center transition-all duration-200">
+            <span x-text="selectedAreola.length ? selectedAreola.join(', ') : 'Pilih kondisi areola/papilla'" 
+                  class="truncate"
+                  :class="selectedAreola.length ? 'text-black' : 'text-gray-500'"></span>
+            <svg class="w-5 h-5 text-gray-700 flex-shrink-0 transition-transform duration-200" 
+                 :class="openAreola ? 'rotate-180' : ''"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+        </button>
+        
+        <div x-show="openAreola" 
+             x-transition:enter="transition ease-out duration-100"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-75"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-95"
+             @click.away="openAreola = false"
+             class="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-lg border border-gray-300 overflow-hidden"
+             style="display: none;">
+            
+            <!-- Normal Option -->
+            <label class="flex items-center px-4 py-2.5 hover:bg-gray-50 cursor-pointer transition-colors duration-150"
+                   :class="areolaAbnormal.length > 0 ? 'opacity-50 cursor-not-allowed' : ''"
+                   @click.stop>
+                <input type="checkbox" 
+                       name="areola_normal" 
+                       value="1"
+                       :disabled="areolaAbnormal.length > 0"
+                       @change="
+                           if ($event.target.checked) {
+                               areolaNormal = true;
+                               areolaAbnormal = [];
+                               selectedAreola = ['Normal'];
+                           } else {
+                               areolaNormal = false;
+                               selectedAreola = selectedAreola.filter(i => i !== 'Normal');
+                           }
+                       "
+                       :checked="areolaNormal"
+                       class="w-4 h-4 mr-3 text-[#85a947] rounded focus:ring-2 focus:ring-[#85a947] focus:ring-offset-0 transition-all">
+                <span class="text-base">Normal</span>
+            </label>
+            
+            <!-- Abnormal Option -->
+            <label class="flex items-center px-4 py-2.5 hover:bg-gray-50 cursor-pointer border-t border-gray-100 transition-colors duration-150"
+                   :class="areolaNormal ? 'opacity-50 cursor-not-allowed' : ''"
+                   @click.stop>
+                <input type="checkbox" 
+                       name="areola_abnormal" 
+                       value="1"
+                       :disabled="areolaNormal"
+                       @change="
+                           if ($event.target.checked) {
+                               areolaNormal = false;
+                               if (!areolaAbnormal.includes('Abnormal')) {
+                                   areolaAbnormal.push('Abnormal');
+                               }
+                               selectedAreola = selectedAreola.filter(i => i !== 'Normal');
+                               if (!selectedAreola.includes('Abnormal')) {
+                                   selectedAreola.push('Abnormal');
+                               }
+                           } else {
+                               areolaAbnormal = areolaAbnormal.filter(i => i !== 'Abnormal');
+                               selectedAreola = selectedAreola.filter(i => i !== 'Abnormal');
+                           }
+                       "
+                       :checked="areolaAbnormal.includes('Abnormal')"
+                       class="w-4 h-4 mr-3 text-[#85a947] rounded focus:ring-2 focus:ring-[#85a947] focus:ring-offset-0 transition-all">
+                <span class="text-base">Abnormal</span>
+            </label>
+            
+            <!-- Retraksi Option -->
+            <label class="flex items-center px-4 py-2.5 hover:bg-gray-50 cursor-pointer border-t border-gray-100 transition-colors duration-150"
+                   :class="areolaNormal ? 'opacity-50 cursor-not-allowed' : ''"
+                   @click.stop>
+                <input type="checkbox" 
+                       name="retraksi" 
+                       value="1"
+                       :disabled="areolaNormal"
+                       @change="
+                           if ($event.target.checked) {
+                               areolaNormal = false;
+                               if (!areolaAbnormal.includes('Retraksi')) {
+                                   areolaAbnormal.push('Retraksi');
+                               }
+                               selectedAreola = selectedAreola.filter(i => i !== 'Normal');
+                               if (!selectedAreola.includes('Retraksi')) {
+                                   selectedAreola.push('Retraksi');
+                               }
+                           } else {
+                               areolaAbnormal = areolaAbnormal.filter(i => i !== 'Retraksi');
+                               selectedAreola = selectedAreola.filter(i => i !== 'Retraksi');
+                           }
+                       "
+                       :checked="areolaAbnormal.includes('Retraksi')"
+                       class="w-4 h-4 mr-3 text-[#85a947] rounded focus:ring-2 focus:ring-[#85a947] focus:ring-offset-0 transition-all">
+                <span class="text-base">Retraksi</span>
+            </label>
+            
+            <!-- Luka Basah Option -->
+            <label class="flex items-center px-4 py-2.5 hover:bg-gray-50 cursor-pointer border-t border-gray-100 transition-colors duration-150"
+                   :class="areolaNormal ? 'opacity-50 cursor-not-allowed' : ''"
+                   @click.stop>
+                <input type="checkbox" 
+                       name="luka_basah_areola" 
+                       value="1"
+                       :disabled="areolaNormal"
+                       @change="
+                           if ($event.target.checked) {
+                               areolaNormal = false;
+                               if (!areolaAbnormal.includes('Luka Basah')) {
+                                   areolaAbnormal.push('Luka Basah');
+                               }
+                               selectedAreola = selectedAreola.filter(i => i !== 'Normal');
+                               if (!selectedAreola.includes('Luka Basah')) {
+                                   selectedAreola.push('Luka Basah');
+                               }
+                           } else {
+                               areolaAbnormal = areolaAbnormal.filter(i => i !== 'Luka Basah');
+                               selectedAreola = selectedAreola.filter(i => i !== 'Luka Basah');
+                           }
+                       "
+                       :checked="areolaAbnormal.includes('Luka Basah')"
+                       class="w-4 h-4 mr-3 text-[#85a947] rounded focus:ring-2 focus:ring-[#85a947] focus:ring-offset-0 transition-all">
+                <span class="text-base">Luka Basah</span>
+            </label>
+            
+            <!-- Cairan Abnormal dari Puting Susu Option -->
+            <label class="flex items-center px-4 py-2.5 hover:bg-gray-50 cursor-pointer border-t border-gray-100 transition-colors duration-150"
+                   :class="areolaNormal ? 'opacity-50 cursor-not-allowed' : ''"
+                   @click.stop>
+                <input type="checkbox" 
+                       name="cairan_abnormal" 
+                       value="1"
+                       :disabled="areolaNormal"
+                       @change="
+                           if ($event.target.checked) {
+                               areolaNormal = false;
+                               if (!areolaAbnormal.includes('Cairan Abnormal dari Puting Susu')) {
+                                   areolaAbnormal.push('Cairan Abnormal dari Puting Susu');
+                               }
+                               selectedAreola = selectedAreola.filter(i => i !== 'Normal');
+                               if (!selectedAreola.includes('Cairan Abnormal dari Puting Susu')) {
+                                   selectedAreola.push('Cairan Abnormal dari Puting Susu');
+                               }
+                           } else {
+                               areolaAbnormal = areolaAbnormal.filter(i => i !== 'Cairan Abnormal dari Puting Susu');
+                               selectedAreola = selectedAreola.filter(i => i !== 'Cairan Abnormal dari Puting Susu');
+                           }
+                       "
+                       :checked="areolaAbnormal.includes('Cairan Abnormal dari Puting Susu')"
+                       class="w-4 h-4 mr-3 text-[#85a947] rounded focus:ring-2 focus:ring-[#85a947] focus:ring-offset-0 transition-all">
+                <span class="text-base">Cairan Abnormal dari Puting Susu</span>
+            </label>
+        </div>
+    </div>
+</div>
 
                 {{-- Baris Benjolan pada Payudara --}}
                 <div class="grid grid-cols-1 md:grid-cols-[1fr_2fr] items-start gap-x-8 gap-y-2 pt-2">

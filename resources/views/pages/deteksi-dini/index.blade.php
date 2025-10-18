@@ -58,11 +58,12 @@
                             <td class="py-4 text-lg">{{ $patient->umur ?? 'N/A' }} Tahun</td>
                             <td class="py-4 text-lg">{{ $patient->nomor_telepon ?? 'N/A' }}</td>
                             <td class="py-4 text-lg">{{ $patient->created_at->format('d/m/Y') }}</td>
-                            <td class="py-4 text-center">
-                                <a href="{{ route('deteksi-dini.show', ['user_id' => $patient->id]) }}" class="inline-block bg-[#3e7b27] text-white font-semibold text-xl px-6 py-1 rounded-md hover:bg-opacity-90 transition">
-                                    Detail
-                                </a>
-                            </td>
+                           <td class="py-4 text-center">
+    <a href="{{ route('deteksi-dini.show', ['user_id' => $patient->user_id]) }}" 
+       class="inline-block bg-[#3e7b27] text-white font-semibold text-xl px-6 py-1 rounded-md hover:bg-opacity-90 transition">
+        Detail
+    </a>
+</td>
                         </tr>
                     @empty
                         <tr>
