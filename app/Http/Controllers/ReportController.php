@@ -29,6 +29,8 @@ class ReportController extends Controller
 
         // Get data for laporan pasien
         $data = [];
+        $statistics = [];
+
         if ($type === 'pasien') {
             $query = BreastResult::with(['user.patientProfile'])
                 ->orderBy('created_at', 'desc');
@@ -62,9 +64,55 @@ class ReportController extends Controller
 
             $perPage = $request->input('per_page', 10);
             $data = $query->paginate($perPage);
+        } elseif ($type === 'penyakit') {
+            // Build base query for statistics
+            $query = BreastResult::query();
+
+            // Filter by date range
+            if ($request->filled('periode_awal')) {
+                $query->whereDate('created_at', '>=', $request->periode_awal);
+            }
+            if ($request->filled('periode_akhir')) {
+                $query->whereDate('created_at', '<=', $request->periode_akhir);
+            }
+
+            // Filter by hasil pemeriksaan
+            if ($request->filled('hasil')) {
+                $query->where('prediction', $request->hasil);
+            }
+
+            // Filter by wilayah (desa_kelurahan)
+            if ($request->filled('wilayah')) {
+                $query->whereHas('user.patientProfile', function ($q) use ($request) {
+                    $q->where('desa_kelurahan', $request->wilayah);
+                });
+            }
+
+            // Get statistics
+            $statistics = [
+                [
+                    'no' => 1,
+                    'hasil' => 'Normal',
+                    'total' => (clone $query)->where('prediction', 'normal')->count()
+                ],
+                [
+                    'no' => 2,
+                    'hasil' => 'Suspect Kelainan Payudara Jinak',
+                    'total' => (clone $query)->where('prediction', 'suspect kelainan payudara jinak')->count()
+                ],
+                [
+                    'no' => 3,
+                    'hasil' => 'Suspect Kelainan Payudara Ganas',
+                    'total' => (clone $query)->where('prediction', 'suspect kelainan payudara ganas')->count()
+                ]
+            ];
         }
 
-        return view($viewName, ['type' => $type, 'results' => $data]);
+        return view($viewName, [
+            'type' => $type,
+            'results' => $data,
+            'statistics' => $statistics
+        ]);
     }
 
     /**

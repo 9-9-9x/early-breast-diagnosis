@@ -25,14 +25,15 @@
                             <div class="relative w-full">
                                 <input type="date" name="periode_awal" id="periode_awal" 
                                     value="{{ request('periode_awal') }}"
-                                    class="w-full h-12 pl-4 pr-12 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947]">
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                                    style="appearance: none; -webkit-appearance: none; -moz-appearance: none;"
+                                    class="w-full h-12 pl-4 pr-12 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947] [&::-webkit-calendar-picker-indicator]:hidden">
+                                <button type="button" onclick="document.getElementById('periode_awal').showPicker()" class="absolute inset-y-0 right-0 flex items-center pr-4 cursor-pointer hover:opacity-70 transition">
                                     <svg class="w-7 h-7 text-gray-500" fill="none" viewBox="0 0 24 24"
                                         stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
-                                </div>
+                                </button>
                             </div>
                         </div>
 
@@ -42,14 +43,15 @@
                             <div class="relative w-full">
                                 <input type="date" name="periode_akhir" id="periode_akhir" 
                                     value="{{ request('periode_akhir') }}"
-                                    class="w-full h-12 pl-4 pr-12 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947]">
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                                    style="appearance: none; -webkit-appearance: none; -moz-appearance: none;"
+                                    class="w-full h-12 pl-4 pr-12 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947] [&::-webkit-calendar-picker-indicator]:hidden">
+                                <button type="button" onclick="document.getElementById('periode_akhir').showPicker()" class="absolute inset-y-0 right-0 flex items-center pr-4 cursor-pointer hover:opacity-70 transition">
                                     <svg class="w-7 h-7 text-gray-500" fill="none" viewBox="0 0 24 24"
                                         stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
-                                </div>
+                                </button>
                             </div>
                         </div>
 

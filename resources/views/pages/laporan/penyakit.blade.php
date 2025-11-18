@@ -13,7 +13,8 @@
                 </h2>
             </div>
 
-            <form action="#" method="GET">
+            <form id="filterForm">
+                <input type="hidden" name="type" value="penyakit">
                 <div class="p-8">
                     {{-- Grid untuk form input --}}
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-6">
@@ -22,15 +23,17 @@
                         <div class="flex items-center gap-4">
                             <label for="periode_awal" class="w-48 text-xl font-medium text-black">Periode Awal</label>
                             <div class="relative w-full">
-                                <input type="text" id="periode_awal" placeholder="DD/MM/YYYY"
-                                    class="w-full h-12 pl-4 pr-12 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947]">
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                                <input type="date" name="periode_awal" id="periode_awal" 
+                                    value="{{ request('periode_awal') }}"
+                                    style="appearance: none; -webkit-appearance: none; -moz-appearance: none;"
+                                    class="w-full h-12 pl-4 pr-12 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947] [&::-webkit-calendar-picker-indicator]:hidden">
+                                <button type="button" onclick="document.getElementById('periode_awal').showPicker()" class="absolute inset-y-0 right-0 flex items-center pr-4 cursor-pointer hover:opacity-70 transition">
                                     <svg class="w-7 h-7 text-gray-500" fill="none" viewBox="0 0 24 24"
                                         stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
-                                </div>
+                                </button>
                             </div>
                         </div>
 
@@ -38,15 +41,17 @@
                         <div class="flex items-center gap-4">
                             <label for="periode_akhir" class="w-48 text-xl font-medium text-black">Periode Akhir</label>
                             <div class="relative w-full">
-                                <input type="text" id="periode_akhir" placeholder="DD/MM/YYYY"
-                                    class="w-full h-12 pl-4 pr-12 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947]">
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                                <input type="date" name="periode_akhir" id="periode_akhir" 
+                                    value="{{ request('periode_akhir') }}"
+                                    style="appearance: none; -webkit-appearance: none; -moz-appearance: none;"
+                                    class="w-full h-12 pl-4 pr-12 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947] [&::-webkit-calendar-picker-indicator]:hidden">
+                                <button type="button" onclick="document.getElementById('periode_akhir').showPicker()" class="absolute inset-y-0 right-0 flex items-center pr-4 cursor-pointer hover:opacity-70 transition">
                                     <svg class="w-7 h-7 text-gray-500" fill="none" viewBox="0 0 24 24"
                                         stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
-                                </div>
+                                </button>
                             </div>
                         </div>
 
@@ -54,11 +59,12 @@
                         <div class="flex items-center gap-4">
                             <label for="hasil" class="w-48 text-xl font-medium text-black">Hasil Pemeriksaan</label>
                             <div class="relative w-full">
-                                <select id="hasil"
+                                <select name="hasil" id="hasil"
                                     class="w-full h-12 px-4 text-lg border border-black rounded-lg appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-[#85a947] text-gray-500">
-                                    <option value="" selected>Pilih Hasil Pemeriksaan</option>
-                                    <option value="positif" class="text-black">Positif</option>
-                                    <option value="negatif" class="text-black">Negatif</option>
+                                    <option value="">Pilih Hasil Pemeriksaan</option>
+                                    <option value="normal" class="text-black" {{ request('hasil') == 'normal' ? 'selected' : '' }}>Normal</option>
+                                    <option value="suspect kelainan payudara jinak" class="text-black" {{ request('hasil') == 'suspect kelainan payudara jinak' ? 'selected' : '' }}>Suspect Kelainan Payudara Jinak</option>
+                                    <option value="suspect kelainan payudara ganas" class="text-black" {{ request('hasil') == 'suspect kelainan payudara ganas' ? 'selected' : '' }}>Suspect Kelainan Payudara Ganas</option>
                                 </select>
                                 <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
                                     <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor"
@@ -74,15 +80,15 @@
                         <div class="flex items-center gap-4">
                             <label for="wilayah" class="w-48 text-xl font-medium text-black">Wilayah</label>
                             <div class="relative w-full">
-                                <select id="wilayah"
+                                <select name="wilayah" id="wilayah"
                                     class="w-full h-12 px-4 text-lg border border-black rounded-lg appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-[#85a947] text-gray-500">
-                                    <option value="" selected>Pilih Wilayah</option>
-                                    <option value="pakusari" class="text-black">Pakusari</option>
-                                    <option value="patemon" class="text-black">Patemon</option>
-                                    <option value="subo" class="text-black">Subo</option>
-                                    <option value="sumberpinang" class="text-black">Sumberpinang</option>
-                                    <option value="jatian" class="text-black">Jatian</option>
-                                    <option value="bedadung" class="text-black">Bedadung</option>
+                                    <option value="">Pilih Wilayah</option>
+                                    <option value="pakusari" class="text-black" {{ request('wilayah') == 'pakusari' ? 'selected' : '' }}>Pakusari</option>
+                                    <option value="patemon" class="text-black" {{ request('wilayah') == 'patemon' ? 'selected' : '' }}>Patemon</option>
+                                    <option value="subo" class="text-black" {{ request('wilayah') == 'subo' ? 'selected' : '' }}>Subo</option>
+                                    <option value="sumberpinang" class="text-black" {{ request('wilayah') == 'sumberpinang' ? 'selected' : '' }}>Sumberpinang</option>
+                                    <option value="jatian" class="text-black" {{ request('wilayah') == 'jatian' ? 'selected' : '' }}>Jatian</option>
+                                    <option value="bedadung" class="text-black" {{ request('wilayah') == 'bedadung' ? 'selected' : '' }}>Bedadung</option>
                                 </select>
                                 <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
                                     <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor"
@@ -97,7 +103,7 @@
 
                     {{-- Tombol Filter & Reset --}}
                     <div class="flex justify-end items-center gap-4 pt-6 mt-6 border-t">
-                        <button type="submit"
+                        <button type="button" id="btnFilter"
                             class="h-14 px-10 rounded-xl bg-[#3e7b27] text-white font-semibold text-2xl hover:bg-opacity-90 transition shadow-sm flex items-center gap-x-3">
                             <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -106,8 +112,8 @@
                             </svg>
                             FILTER
                         </button>
-                        <button type="reset"
-                            class="h-14 px-10 rounded-xl border border-[#3e7b27] text-black font-semibold text-2xl hover:bg-gray-100 transition shadow-sm">
+                        <button type="button" id="btnReset"
+                            class="h-14 px-10 rounded-xl border border-[#3e7b27] text-black font-semibold text-2xl hover:bg-gray-100 transition shadow-sm flex items-center justify-center">
                             RESET
                         </button>
                     </div>
@@ -116,87 +122,154 @@
         </div>
 
         {{-- CARD 2: TABEL DATA --}}
-        <div class="bg-white rounded-2xl shadow-lg p-6">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-                <div class="flex items-center gap-x-2 text-lg self-start w-full">
-                    <span>Show</span>
-                    <div class="relative">
-                        <select
-                            class="w-24 appearance-none border border-black rounded-md py-2 px-4 bg-white focus:outline-none focus:ring-2 focus:ring-[#85a947]">
-                            <option>10</option>
-                            <option>25</option>
-                            <option>50</option>
-                        </select>
-                        <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
-                            <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
-                                </path>
-                            </svg>
-                        </div>
-                    </div>
-                    <span>entries</span>
-                </div>
-                <div class="w-full md:w-auto flex flex-col items-end gap-4">
-                    <a href="#"
-                        class="w-full sm:w-auto h-14 px-8 rounded-xl bg-[#3e7b27] text-white font-semibold text-2xl hover:bg-opacity-90 transition shadow-sm flex items-center justify-center flex-shrink-0">
-                        Cetak Laporan
-                    </a>
-                    <div class="relative w-full sm:w-80">
-                        <input type="search" placeholder="Search .."
-                            class="w-full h-12 pl-5 pr-10 rounded-xl border border-black focus:outline-none focus:ring-2 focus:ring-[#85a947] text-lg">
-                        <svg class="w-5 h-5 absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </div>
-                </div>
+        <div class="bg-white rounded-2xl shadow-lg p-6" id="tableCard">
+            <div class="flex justify-end items-center gap-4 mb-6">
+                <button type="button" onclick="window.print()"
+                    class="h-14 px-8 rounded-xl bg-[#3e7b27] text-white font-semibold text-2xl hover:bg-opacity-90 transition shadow-sm flex items-center justify-center">
+                    Cetak Laporan
+                </button>
             </div>
 
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto" id="tableContent">
                 <table class="w-full text-left">
                     <thead>
                         <tr class="border-b-2 border-black">
                             @php
                                 $headerClasses = 'pb-4 text-xl font-medium text-black whitespace-nowrap';
-                                $sortIcon =
-                                    '<svg class="inline-block w-5 h-5 text-gray-400 ml-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>';
                             @endphp
-                            <th class="{{ $headerClasses }} w-24">No {!! $sortIcon !!}</th>
-                            <th class="{{ $headerClasses }}">Hasil Pemeriksaan {!! $sortIcon !!}</th>
-                            <th class="{{ $headerClasses }} text-right">Total {!! $sortIcon !!}</th>
+                            <th class="{{ $headerClasses }} w-24">No</th>
+                            <th class="{{ $headerClasses }}">Hasil Pemeriksaan</th>
+                            <th class="{{ $headerClasses }} text-right">Total</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="border-b">
-                            <td class="py-4 text-lg">1.</td>
-                            <td class="py-4 text-lg">Normal</td>
-                            <td class="py-4 text-lg text-right">0</td>
-                        </tr>
-                        <tr class="border-b">
-                            <td class="py-4 text-lg">2.</td>
-                            <td class="py-4 text-lg">Suspect Kelainan Payudara Jinak</td>
-                            <td class="py-4 text-lg text-right">0</td>
-                        </tr>
-                        <tr class="border-b">
-                            <td class="py-4 text-lg">3.</td>
-                            <td class="py-4 text-lg">Suspect Kelainan Payudara Ganas</td>
-                            <td class="py-4 text-lg text-right">0</td>
-                        </tr>
+                        @if(count($statistics) > 0)
+                            @foreach($statistics as $stat)
+                                <tr class="border-b border-gray-200">
+                                    <td class="py-4 text-lg">{{ $stat['no'] }}.</td>
+                                    <td class="py-4 text-lg">{{ $stat['hasil'] }}</td>
+                                    <td class="py-4 text-lg text-right font-semibold">{{ $stat['total'] }}</td>
+                                </tr>
+                            @endforeach
+                            <tr class="border-t-2 border-black bg-gray-50">
+                                <td colspan="2" class="py-4 text-xl font-semibold">Total Keseluruhan</td>
+                                <td class="py-4 text-xl font-bold text-right">
+                                    {{ collect($statistics)->sum('total') }}
+                                </td>
+                            </tr>
+                        @else
+                            <tr>
+                                <td colspan="3" class="text-center py-16 text-gray-500 text-xl">
+                                    Tidak ada data untuk ditampilkan.
+                                </td>
+                            </tr>
+                        @endif
                     </tbody>
                 </table>
             </div>
-
-            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6">
-                <p class="text-lg text-gray-700">
-                    Showing 1 to 3 of 3 entries
-                </p>
-                <div class="flex items-center gap-x-2">
-                    <button class="px-3 py-1 border rounded hover:bg-gray-100" disabled>Previous</button>
-                    <button class="px-3 py-1 border rounded bg-[#85a947] text-white">1</button>
-                    <button class="px-3 py-1 border rounded hover:bg-gray-100" disabled>Next</button>
-                </div>
-            </div>
         </div>
     </div>
+
+    {{-- Print Styles --}}
+    <style>
+        @media print {
+            /* Hide elements that shouldn't be printed */
+            .no-print,
+            button,
+            form#filterForm,
+            nav,
+            .sidebar,
+            header,
+            footer {
+                display: none !important;
+            }
+
+            /* Adjust card styles for print */
+            .bg-white {
+                box-shadow: none !important;
+            }
+
+            /* Ensure table is fully visible */
+            .overflow-x-auto {
+                overflow: visible !important;
+            }
+
+            /* Page break settings */
+            table {
+                page-break-inside: auto;
+            }
+
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+
+            /* Better print layout */
+            body {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+
+            /* Show all pages */
+            @page {
+                margin: 1cm;
+            }
+        }
+    </style>
+
+    {{-- AJAX Filter Script --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterForm = document.getElementById('filterForm');
+            const btnFilter = document.getElementById('btnFilter');
+            const btnReset = document.getElementById('btnReset');
+            const tableCard = document.getElementById('tableCard');
+
+            // Function to load data
+            function loadData() {
+                const formData = new FormData(filterForm);
+                const params = new URLSearchParams();
+                params.append('type', 'penyakit');
+                
+                for (let [key, value] of formData.entries()) {
+                    if (value && key !== 'type') {
+                        params.append(key, value);
+                    }
+                }
+
+                const finalUrl = `{{ route('report.index') }}?${params.toString()}`;
+
+                fetch(finalUrl, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    
+                    const newTableContent = doc.getElementById('tableContent');
+                    
+                    if (newTableContent) {
+                        document.getElementById('tableContent').innerHTML = newTableContent.innerHTML;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+
+            // Filter button click
+            btnFilter.addEventListener('click', function() {
+                loadData();
+            });
+
+            // Reset button click
+            btnReset.addEventListener('click', function() {
+                filterForm.reset();
+                loadData();
+            });
+        });
+    </script>
 @endsection
