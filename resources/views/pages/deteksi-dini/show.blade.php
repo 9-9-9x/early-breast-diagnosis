@@ -15,13 +15,17 @@
         <h1 class="text-2xl md:text-3xl font-semibold text-center text-black w-full">
             Hasil Pemeriksaan Payudara
         </h1>
-        <button class="p-2 rounded-full hover:bg-gray-100 transition">
-            <svg class="w-8 h-8 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+        <button onclick="window.print()" class="p-2 rounded-full hover:bg-gray-100 transition">
+            <svg class="w-8 h-8 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>
         </button>
     </div>
 
-   <form method="" action="{{ route('deteksi-dini.index') }}">
-    @csrf
+    <form action="{{ route('deteksi-dini.update') }}" method="POST">
+        @csrf
+        @method('PUT')
+        <input type="hidden" name="user_id" value="{{ $user->id }}">
         <div class="p-8">
             <div class="max-w-5xl mx-auto">
 
@@ -32,10 +36,23 @@
                     </div>
                     <div class="mt-12 space-y-6">
                         <h3 class="text-3xl font-semibold text-black">Rekomendasi:</h3>
-                        {{-- CARA PEMANGGILAN BARU: 'value' untuk backend, teks di dalam untuk user --}}
-                        <x-recommendation-item value="sadari_bulanan">Anjurkan SADARI setiap bulan</x-recommendation-item>
-                        <x-recommendation-item value="periksa_tahunan">Pemeriksaan Payudara setahun sekali</x-recommendation-item>
-                        <x-recommendation-item value="mammografi_40_plus">Pemeriksaan mammografi pada usia > 40 tahun</x-recommendation-item>
+                        <x-recommendation-item 
+                            value="sadari_bulanan"
+                            :checked="$breastResult && $breastResult->isRecommendationChecked('sadari_bulanan')">
+                            Anjurkan SADARI setiap bulan
+                        </x-recommendation-item>
+                        
+                        <x-recommendation-item 
+                            value="periksa_tahunan"
+                            :checked="$breastResult && $breastResult->isRecommendationChecked('periksa_tahunan')">
+                            Pemeriksaan Payudara setahun sekali
+                        </x-recommendation-item>
+                        
+                        <x-recommendation-item 
+                            value="mammografi_40_plus"
+                            :checked="$breastResult && $breastResult->isRecommendationChecked('mammografi_40_plus')">
+                            Pemeriksaan mammografi pada usia > 40 tahun
+                        </x-recommendation-item>
                     </div>
 
                 @elseif ($resultType == 'jinak')
@@ -46,7 +63,11 @@
                     </div>
                     <div class="mt-12 space-y-6">
                         <h3 class="text-3xl font-semibold text-black">Rekomendasi:</h3>
-                        <x-recommendation-item value="rujuk_lanjutan">Rujuk untuk pemeriksaan lanjutan</x-recommendation-item>
+                        <x-recommendation-item 
+                            value="rujuk_lanjutan"
+                            :checked="$breastResult && $breastResult->isRecommendationChecked('rujuk_lanjutan')">
+                            Rujuk untuk pemeriksaan lanjutan
+                        </x-recommendation-item>
                     </div>
 
                 @else {{-- Anggap saja ini untuk 'ganas' --}}
@@ -57,7 +78,11 @@
                     </div>
                     <div class="mt-12 space-y-6">
                         <h3 class="text-3xl font-semibold text-black">Rekomendasi:</h3>
-                        <x-recommendation-item value="rujuk_lanjutan">Rujuk untuk pemeriksaan lanjutan</x-recommendation-item>
+                        <x-recommendation-item 
+                            value="rujuk_lanjutan"
+                            :checked="$breastResult && $breastResult->isRecommendationChecked('rujuk_lanjutan')">
+                            Rujuk untuk pemeriksaan lanjutan
+                        </x-recommendation-item>
                     </div>
                 @endif
 
@@ -65,14 +90,16 @@
         </div>
 
         {{-- Action Buttons --}}
-      <div class="p-6 bg-gray-50 border-t flex justify-end items-center gap-4">
-        <a href="{{ route('deteksi-dini.create', ['user_id' => $userId ?? session('user_id')]) }}" class="w-full sm:w-auto h-16 px-10 rounded-xl border border-[#3e7b27] text-black font-semibold text-2xl hover:bg-gray-100 transition shadow-sm flex items-center justify-center">
-            BATAL
-        </a>
-        <button type="submit" class="w-full sm:w-auto h-16 px-10 rounded-xl bg-[#3e7b27] text-white font-semibold text-2xl hover:bg-opacity-90 transition shadow-sm">
-            SIMPAN
-        </button>
-    </div>
+        <div class="p-6 bg-gray-50 border-t flex justify-end items-center gap-4">
+            <a href="{{ route('deteksi-dini.index') }}" 
+               class="w-full sm:w-auto h-16 px-10 rounded-xl border border-[#3e7b27] text-black font-semibold text-2xl hover:bg-gray-100 transition shadow-sm flex items-center justify-center">
+                BATAL
+            </a>
+            <button type="submit" 
+                    class="w-full sm:w-auto h-16 px-10 rounded-xl bg-[#3e7b27] text-white font-semibold text-2xl hover:bg-opacity-90 transition shadow-sm">
+                SIMPAN
+            </button>
+        </div>
     </form>
 </div>
 

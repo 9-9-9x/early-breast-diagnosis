@@ -1,12 +1,19 @@
-@props(['value'])
+@props(['value', 'checked' => false])
 
 @php
     $id = 'recommendation_' . Str::slug($value);
+    
+    $isChecked = (is_array(old('recommendations')) && in_array($value, old('recommendations'))) 
+                 || $checked;
 @endphp
 
 <label for="{{ $id }}" class="flex items-center gap-x-6 cursor-pointer group">
-    <input type="checkbox" id="{{ $id }}" name="recommendations[]" value="{{ $value }}" class="hidden peer"
-           @if(is_array(old('recommendations')) && in_array($value, old('recommendations'))) checked @endif>
+    <input type="checkbox" 
+           id="{{ $id }}" 
+           name="recommendations[]" 
+           value="{{ $value }}" 
+           class="hidden peer"
+           {{ $isChecked ? 'checked' : '' }}>
 
     <div class="flex-shrink-0 w-14 h-14 border border-black rounded-lg flex items-center justify-center transition-colors
                 peer-checked:bg-[#3e7b27] peer-checked:border-[#3e7b27] group-hover:border-[#85a947]">

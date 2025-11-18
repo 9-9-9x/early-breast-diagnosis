@@ -217,40 +217,36 @@ class BreastExamController extends Controller
     public function show(Request $request)
     {
         $user_id = $request->input('user_id');
-        if ($user_id) {
-            $user = User::find($user_id);
-            if (!$user) {
-                return redirect()->route('deteksi-dini.index')->withErrors(['error' => 'User not found.']);
-            }
 
-            if (!$user->breastExam()->exists()) {
-                return redirect()->route('deteksi-dini.create', ['user_id' => $user->id])
-                    ->with('info', 'Silakan isi form pemeriksaan payudara terlebih dahulu.');
-            }
-
-            // Ambil breast exam terakhir
-            $breastExam = $user->breastExam()->latest()->first();
-
-            // Ambil breast result terakhir untuk mendapatkan prediction
-            $breastResult = $breastExam->breastResult;
-
-            // Tentukan resultType dari prediction
-            $resultType = session('resultType', 'normal');
-            if ($breastResult && $breastResult->prediction) {
-                $prediction = strtolower($breastResult->prediction);
-                if (str_contains($prediction, 'ganas')) {
-                    $resultType = 'ganas';
-                } elseif (str_contains($prediction, 'jinak')) {
-                    $resultType = 'jinak';
-                } else {
-                    $resultType = 'normal';
-                }
-            }
-
-            return view('pages.deteksi-dini.show', compact('user', 'breastExam', 'breastResult', 'resultType'));
+        if (!$user_id) {
+            return redirect()->route('deteksi-dini.index')
+                ->withErrors(['error' => 'User ID tidak ditemukan.']);
         }
 
-        return view('pages.deteksi-dini.show');
+        $user = User::find($user_id);
+
+        if (!$user) {
+            return redirect()->route('deteksi-dini.index')
+                ->withErrors(['error' => 'User tidak ditemukan.']);
+        }
+
+        $breastExam = BreastExam::where('user_id', $user_id)->latest()->first();
+
+        if (!$breastExam) {
+            return redirect()->route('deteksi-dini.create', ['user_id' => $user->id])
+                ->with('info', 'Silakan isi form pemeriksaan payudara terlebih dahulu.');
+        }
+
+        $breastResult = BreastResult::where('breast_exam_id', $breastExam->id)->first();
+
+        if (!$breastResult) {
+            return redirect()->route('deteksi-dini.create', ['user_id' => $user->id])
+                ->with('info', 'Data hasil belum tersedia.');
+        }
+
+        $resultType = $this->getResultType($breastResult->prediction);
+
+        return view('pages.deteksi-dini.show', compact('user', 'breastExam', 'breastResult', 'resultType'));
     }
 
     /**
@@ -264,9 +260,39 @@ class BreastExamController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'recommendations' => 'nullable|array',
+        ]);
+
+        $user_id = $validated['user_id'];
+
+        $breastExam = BreastExam::where('user_id', $user_id)->latest()->first();
+
+        if (!$breastExam) {
+            return back()->withErrors(['error' => 'Data breast exam tidak ditemukan.']);
+        }
+
+        $breastResult = BreastResult::where('breast_exam_id', $breastExam->id)->first();
+
+        if (!$breastResult) {
+            return back()->withErrors(['error' => 'Data hasil pemeriksaan tidak ditemukan.']);
+        }
+
+        $recommendations = $request->input('recommendations', []);
+
+        $breastResult->update([
+            'sadari_bulanan' => in_array('sadari_bulanan', $recommendations) ? 1 : 0,
+            'periksa_tahunan' => in_array('periksa_tahunan', $recommendations) ? 1 : 0,
+            'mammografi_40_plus' => in_array('mammografi_40_plus', $recommendations) ? 1 : 0,
+            'rujuk_lanjutan' => in_array('rujuk_lanjutan', $recommendations) ? 1 : 0,
+        ]);
+
+        return redirect()
+            ->route('deteksi-dini.index')
+            ->with('success', 'Rekomendasi berhasil disimpan.');
     }
 
     /**
@@ -275,6 +301,18 @@ class BreastExamController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    private function getResultType(string $prediction): string
+    {
+        $predictionLower = strtolower($prediction);
+        if (str_contains($predictionLower, 'ganas')) {
+            return 'ganas';
+        } elseif (str_contains($predictionLower, 'jinak')) {
+            return 'jinak';
+        } else {
+            return 'normal';
+        }
     }
 
     /**

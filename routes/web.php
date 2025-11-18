@@ -35,6 +35,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/deteksi-dini/create', [BreastExamController::class, 'create'])->name('deteksi-dini.create');
     Route::post('/deteksi-dini/create', [BreastExamController::class, 'store'])->name('deteksi-dini.store');
     Route::get('/deteksi-dini/show', [BreastExamController::class, 'show'])->name('deteksi-dini.show');
+    // Route::post('/deteksi-dini/update', [BreastExamController::class, 'update'])->name('deteksi-dini.update');
+    Route::match(['POST', 'PUT'], '/deteksi-dini/update', [BreastExamController::class, 'update'])->name('deteksi-dini.update');
 
     Route::get('/laporan', [ReportController::class, 'index'])->name('report.index');
 

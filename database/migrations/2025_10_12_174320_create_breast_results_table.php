@@ -13,6 +13,10 @@ return new class extends Migration
             $table->foreignId('breast_exam_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('prediction');
+            $table->boolean('sadari_bulanan')->default(0);
+            $table->boolean('periksa_tahunan')->default(0);
+            $table->boolean('mammografi_40_plus')->default(0);
+            $table->boolean('rujuk_lanjutan')->default(0);
             $table->timestamps();
         });
     }
