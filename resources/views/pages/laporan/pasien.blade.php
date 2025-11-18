@@ -13,7 +13,8 @@
                 </h2>
             </div>
 
-            <form action="#" method="GET">
+            <form id="filterForm">
+                <input type="hidden" name="type" value="pasien">
                 <div class="p-8">
                     {{-- Grid untuk form input dan tombol --}}
                     <div class="grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-2 gap-x-16 gap-y-6">
@@ -22,7 +23,8 @@
                         <div class="flex items-center gap-4">
                             <label for="periode_awal" class="w-48 text-xl font-medium text-black">Periode Awal</label>
                             <div class="relative w-full">
-                                <input type="text" id="periode_awal" placeholder="DD/MM/YYYY"
+                                <input type="date" name="periode_awal" id="periode_awal" 
+                                    value="{{ request('periode_awal') }}"
                                     class="w-full h-12 pl-4 pr-12 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947]">
                                 <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
                                     <svg class="w-7 h-7 text-gray-500" fill="none" viewBox="0 0 24 24"
@@ -38,7 +40,8 @@
                         <div class="flex items-center gap-4">
                             <label for="periode_akhir" class="w-48 text-xl font-medium text-black">Periode Akhir</label>
                             <div class="relative w-full">
-                                <input type="text" id="periode_akhir" placeholder="DD/MM/YYYY"
+                                <input type="date" name="periode_akhir" id="periode_akhir" 
+                                    value="{{ request('periode_akhir') }}"
                                     class="w-full h-12 pl-4 pr-12 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947]">
                                 <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
                                     <svg class="w-7 h-7 text-gray-500" fill="none" viewBox="0 0 24 24"
@@ -54,11 +57,12 @@
                         <div class="flex items-center gap-4">
                             <label for="hasil" class="w-48 text-xl font-medium text-black">Hasil Pemeriksaan</label>
                             <div class="relative w-full">
-                                <select id="hasil"
+                                <select name="hasil" id="hasil"
                                     class="w-full h-12 px-4 text-lg border border-black rounded-lg appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-[#85a947] text-gray-500">
-                                    <option value="" selected>Pilih Hasil Pemeriksaan</option>
-                                    <option value="positif" class="text-black">Positif</option>
-                                    <option value="negatif" class="text-black">Negatif</option>
+                                    <option value="">Pilih Hasil Pemeriksaan</option>
+                                    <option value="normal" class="text-black" {{ request('hasil') == 'normal' ? 'selected' : '' }}>Normal</option>
+                                    <option value="suspect kelainan payudara jinak" class="text-black" {{ request('hasil') == 'suspect kelainan payudara jinak' ? 'selected' : '' }}>Suspect Kelainan Payudara Jinak</option>
+                                    <option value="suspect kelainan payudara ganas" class="text-black" {{ request('hasil') == 'suspect kelainan payudara ganas' ? 'selected' : '' }}>Suspect Kelainan Payudara Ganas</option>
                                 </select>
                                 <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
                                     <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor"
@@ -74,15 +78,15 @@
                         <div class="flex items-center gap-4">
                             <label for="wilayah" class="w-48 text-xl font-medium text-black">Wilayah</label>
                             <div class="relative w-full">
-                                <select id="wilayah"
+                                <select name="wilayah" id="wilayah"
                                     class="w-full h-12 px-4 text-lg border border-black rounded-lg appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-[#85a947] text-gray-500">
-                                    <option value="" selected>Pilih Wilayah</option>
-                                    <option value="pakusari" class="text-black">Pakusari</option>
-                                    <option value="patemon" class="text-black">Patemon</option>
-                                    <option value="subo" class="text-black">Subo</option>
-                                    <option value="sumberpinang" class="text-black">Sumberpinang</option>
-                                    <option value="jatian" class="text-black">Jatian</option>
-                                    <option value="bedadung" class="text-black">Bedadung</option>
+                                    <option value="">Pilih Wilayah</option>
+                                    <option value="pakusari" class="text-black" {{ request('wilayah') == 'pakusari' ? 'selected' : '' }}>Pakusari</option>
+                                    <option value="patemon" class="text-black" {{ request('wilayah') == 'patemon' ? 'selected' : '' }}>Patemon</option>
+                                    <option value="subo" class="text-black" {{ request('wilayah') == 'subo' ? 'selected' : '' }}>Subo</option>
+                                    <option value="sumberpinang" class="text-black" {{ request('wilayah') == 'sumberpinang' ? 'selected' : '' }}>Sumberpinang</option>
+                                    <option value="jatian" class="text-black" {{ request('wilayah') == 'jatian' ? 'selected' : '' }}>Jatian</option>
+                                    <option value="bedadung" class="text-black" {{ request('wilayah') == 'bedadung' ? 'selected' : '' }}>Bedadung</option>
                                 </select>
                                 <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
                                     <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor"
@@ -97,7 +101,7 @@
 
                     {{-- Tombol Filter & Reset --}}
                     <div class="flex justify-end items-center gap-4 pt-6 mt-6 border-t">
-                        <button type="submit"
+                        <button type="button" id="btnFilter"
                             class="h-14 px-10 rounded-xl bg-[#3e7b27] text-white font-semibold text-2xl hover:bg-opacity-90 transition shadow-sm flex items-center gap-x-3">
                             <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -106,8 +110,8 @@
                             </svg>
                             FILTER
                         </button>
-                        <button type="reset"
-                            class="h-14 px-10 rounded-xl border border-[#3e7b27] text-black font-semibold text-2xl hover:bg-gray-100 transition shadow-sm">
+                        <button type="button" id="btnReset"
+                            class="h-14 px-10 rounded-xl border border-[#3e7b27] text-black font-semibold text-2xl hover:bg-gray-100 transition shadow-sm flex items-center justify-center">
                             RESET
                         </button>
                     </div>
@@ -116,16 +120,16 @@
         </div>
 
         {{-- CARD 2: TABEL DATA --}}
-        <div class="bg-white rounded-2xl shadow-lg p-6">
+        <div class="bg-white rounded-2xl shadow-lg p-6" id="tableCard">
             <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
                 <div class="flex items-center gap-x-2 text-lg self-start">
                     <span>Show</span>
                     <div class="relative">
-                        <select
+                        <select id="perPage"
                             class="w-24 appearance-none border border-black rounded-md py-2 px-4 bg-white focus:outline-none focus:ring-2 focus:ring-[#85a947]">
-                            <option>10</option>
-                            <option>25</option>
-                            <option>50</option>
+                            <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
+                            <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                            <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
                         </select>
                         <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
                             <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -138,7 +142,8 @@
                 </div>
                 <div class="w-full md:w-auto flex flex-col sm:flex-row items-center gap-4">
                     <div class="relative w-full">
-                        <input type="search" placeholder="Search .."
+                        <input type="search" id="searchInput" placeholder="Search nama pasien.." 
+                            value="{{ request('search') }}"
                             class="w-full sm:w-80 h-12 pl-5 pr-10 rounded-xl border border-black focus:outline-none focus:ring-2 focus:ring-[#85a947] text-lg">
                         <svg class="w-5 h-5 absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
@@ -146,14 +151,14 @@
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </div>
-                    <a href="#"
+                    <button type="button" onclick="window.print()"
                         class="w-full sm:w-auto h-14 px-8 rounded-xl bg-[#3e7b27] text-white font-semibold text-2xl hover:bg-opacity-90 transition shadow-sm flex items-center justify-center flex-shrink-0">
                         Cetak Laporan
-                    </a>
+                    </button>
                 </div>
             </div>
 
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto" id="tableContent">
                 <table class="w-full text-left">
                     <thead>
                         <tr class="border-b-2 border-black">
@@ -162,32 +167,258 @@
                                 $sortIcon =
                                     '<svg class="inline-block w-5 h-5 text-gray-400 ml-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>';
                             @endphp
-                            <th class="{{ $headerClasses }} w-16">No {!! $sortIcon !!}</th>
-                            <th class="{{ $headerClasses }}">Nama {!! $sortIcon !!}</th>
-                            <th class="{{ $headerClasses }}">Umur {!! $sortIcon !!}</th>
-                            <th class="{{ $headerClasses }}">Tanggal Pemeriksaan {!! $sortIcon !!}</th>
-                            <th class="{{ $headerClasses }}">Hasil Pemeriksaan {!! $sortIcon !!}</th>
+                            <th class="{{ $headerClasses }} w-16">No</th>
+                            <th class="{{ $headerClasses }}">Nama</th>
+                            <th class="{{ $headerClasses }}">Umur</th>
+                            <th class="{{ $headerClasses }}">Tanggal Pemeriksaan</th>
+                            <th class="{{ $headerClasses }}">Hasil Pemeriksaan</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td colspan="5" class="text-center py-16 text-gray-500 text-xl">
-                                Tidak ada data untuk ditampilkan.
-                            </td>
-                        </tr>
+                        @forelse($results as $index => $result)
+                            <tr class="border-b border-gray-200">
+                                <td class="py-4 text-lg">{{ $results->firstItem() + $index }}</td>
+                                <td class="py-4 text-lg">
+                                    {{ $result->user->patientProfile->nama ?? 'Tidak ada nama' }}
+                                </td>
+                                <td class="py-4 text-lg">
+                                    @if($result->user->patientProfile && $result->user->patientProfile->umur)
+                                        {{ $result->user->patientProfile->umur }} tahun
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td class="py-4 text-lg">
+                                    {{ \Carbon\Carbon::parse($result->created_at)->format('d/m/Y') }}
+                                </td>
+                                <td class="py-4 text-lg">
+                                    @php
+                                        $predictionLower = strtolower($result->prediction);
+                                        $badgeColor = 'bg-green-500'; // normal
+                                        if (str_contains($predictionLower, 'jinak')) {
+                                            $badgeColor = 'bg-yellow-500';
+                                        } elseif (str_contains($predictionLower, 'ganas')) {
+                                            $badgeColor = 'bg-red-500';
+                                        }
+                                    @endphp
+                                    <span class="px-3 py-1 rounded-full text-white font-semibold {{ $badgeColor }}">
+                                        {{ ucwords($result->prediction) }}
+                                    </span>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="text-center py-16 text-gray-500 text-xl">
+                                    Tidak ada data untuk ditampilkan.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
 
-            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6" id="paginationInfo">
                 <p class="text-lg text-gray-700">
-                    Showing 0 to 0 of 0 entries
+                    Showing {{ $results->firstItem() ?? 0 }} to {{ $results->lastItem() ?? 0 }} of {{ $results->total() }} entries
                 </p>
-                <div class="flex items-center gap-x-2">
-                    <button class="px-3 py-1 border rounded hover:bg-gray-100" disabled>Previous</button>
-                    <button class="px-3 py-1 border rounded hover:bg-gray-100" disabled>Next</button>
-                </div>
+                @if($results->hasPages())
+                    <div class="flex items-center gap-x-2">
+                        {{-- Previous Button --}}
+                        @if ($results->onFirstPage())
+                            <span class="px-4 py-2 border rounded bg-gray-100 text-gray-400 cursor-not-allowed">Previous</span>
+                        @else
+                            <a href="{{ $results->appends(request()->query())->previousPageUrl() }}" 
+                               class="px-4 py-2 border rounded hover:bg-gray-100 transition">Previous</a>
+                        @endif
+
+                        {{-- Page Numbers - Show limited range --}}
+                        @php
+                            $start = max(1, $results->currentPage() - 2);
+                            $end = min($results->lastPage(), $results->currentPage() + 2);
+                        @endphp
+
+                        @if($start > 1)
+                            <a href="{{ $results->appends(request()->query())->url(1) }}" 
+                               class="px-4 py-2 border rounded hover:bg-gray-100 transition">1</a>
+                            @if($start > 2)
+                                <span class="px-2">...</span>
+                            @endif
+                        @endif
+
+                        @for($page = $start; $page <= $end; $page++)
+                            @if ($page == $results->currentPage())
+                                <span class="px-4 py-2 border rounded bg-[#3e7b27] text-white font-semibold">{{ $page }}</span>
+                            @else
+                                <a href="{{ $results->appends(request()->query())->url($page) }}" 
+                                   class="px-4 py-2 border rounded hover:bg-gray-100 transition">{{ $page }}</a>
+                            @endif
+                        @endfor
+
+                        @if($end < $results->lastPage())
+                            @if($end < $results->lastPage() - 1)
+                                <span class="px-2">...</span>
+                            @endif
+                            <a href="{{ $results->appends(request()->query())->url($results->lastPage()) }}" 
+                               class="px-4 py-2 border rounded hover:bg-gray-100 transition">{{ $results->lastPage() }}</a>
+                        @endif
+
+                        {{-- Next Button --}}
+                        @if ($results->hasMorePages())
+                            <a href="{{ $results->appends(request()->query())->nextPageUrl() }}" 
+                               class="px-4 py-2 border rounded hover:bg-gray-100 transition">Next</a>
+                        @else
+                            <span class="px-4 py-2 border rounded bg-gray-100 text-gray-400 cursor-not-allowed">Next</span>
+                        @endif
+                    </div>
+                @endif
             </div>
         </div>
     </div>
+
+    {{-- Print Styles --}}
+    <style>
+        @media print {
+            /* Hide elements that shouldn't be printed */
+            .no-print,
+            button,
+            form#filterForm,
+            nav,
+            .sidebar,
+            header,
+            footer {
+                display: none !important;
+            }
+
+            /* Adjust card styles for print */
+            .bg-white {
+                box-shadow: none !important;
+            }
+
+            /* Ensure table is fully visible */
+            .overflow-x-auto {
+                overflow: visible !important;
+            }
+
+            /* Page break settings */
+            table {
+                page-break-inside: auto;
+            }
+
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+
+            /* Better print layout */
+            body {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+
+            /* Show all pages */
+            @page {
+                margin: 1cm;
+            }
+        }
+    </style>
+
+    {{-- AJAX Filter Script --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let searchTimeout;
+            const filterForm = document.getElementById('filterForm');
+            const btnFilter = document.getElementById('btnFilter');
+            const btnReset = document.getElementById('btnReset');
+            const searchInput = document.getElementById('searchInput');
+            const perPageSelect = document.getElementById('perPage');
+            const tableCard = document.getElementById('tableCard');
+
+            // Function to load data
+            function loadData(url = null) {
+                const formData = new FormData(filterForm);
+                const perPage = perPageSelect.value;
+                const search = searchInput.value;
+
+                const params = new URLSearchParams();
+                params.append('type', 'pasien');
+                params.append('per_page', perPage);
+                if (search) params.append('search', search);
+                
+                for (let [key, value] of formData.entries()) {
+                    if (value && key !== 'type') {
+                        params.append(key, value);
+                    }
+                }
+
+                const finalUrl = url || `{{ route('report.index') }}?${params.toString()}`;
+
+                fetch(finalUrl, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    
+                    const newTableContent = doc.getElementById('tableContent');
+                    const newPaginationInfo = doc.getElementById('paginationInfo');
+                    
+                    if (newTableContent) {
+                        document.getElementById('tableContent').innerHTML = newTableContent.innerHTML;
+                    }
+                    if (newPaginationInfo) {
+                        document.getElementById('paginationInfo').innerHTML = newPaginationInfo.innerHTML;
+                    }
+
+                    // Re-attach pagination click handlers
+                    attachPaginationHandlers();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+
+            // Function to attach pagination handlers
+            function attachPaginationHandlers() {
+                const paginationLinks = document.querySelectorAll('#paginationInfo a');
+                paginationLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        loadData(this.href);
+                    });
+                });
+            }
+
+            // Filter button click
+            btnFilter.addEventListener('click', function() {
+                loadData();
+            });
+
+            // Reset button click
+            btnReset.addEventListener('click', function() {
+                filterForm.reset();
+                searchInput.value = '';
+                perPageSelect.value = '10';
+                loadData();
+            });
+
+            // Search input with debounce
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    loadData();
+                }, 500);
+            });
+
+            // Per page change
+            perPageSelect.addEventListener('change', function() {
+                loadData();
+            });
+
+            // Initial pagination handlers
+            attachPaginationHandlers();
+        });
+    </script>
 @endsection

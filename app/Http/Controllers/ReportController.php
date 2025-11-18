@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BreastResult;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
@@ -26,7 +27,44 @@ class ReportController extends Controller
             default => 'pages.laporan.pasien', // Fallback, though validation should prevent this
         };
 
-        return view($viewName, ['type' => $type]);
+        // Get data for laporan pasien
+        $data = [];
+        if ($type === 'pasien') {
+            $query = BreastResult::with(['user.patientProfile'])
+                ->orderBy('created_at', 'desc');
+
+            // Filter by date range
+            if ($request->filled('periode_awal')) {
+                $query->whereDate('created_at', '>=', $request->periode_awal);
+            }
+            if ($request->filled('periode_akhir')) {
+                $query->whereDate('created_at', '<=', $request->periode_akhir);
+            }
+
+            // Filter by hasil pemeriksaan
+            if ($request->filled('hasil')) {
+                $query->where('prediction', $request->hasil);
+            }
+
+            // Filter by wilayah (desa_kelurahan)
+            if ($request->filled('wilayah')) {
+                $query->whereHas('user.patientProfile', function ($q) use ($request) {
+                    $q->where('desa_kelurahan', $request->wilayah);
+                });
+            }
+
+            // Add search functionality
+            if ($request->filled('search')) {
+                $query->whereHas('user.patientProfile', function ($q) use ($request) {
+                    $q->where('nama', 'like', '%' . $request->search . '%');
+                });
+            }
+
+            $perPage = $request->input('per_page', 10);
+            $data = $query->paginate($perPage);
+        }
+
+        return view($viewName, ['type' => $type, 'results' => $data]);
     }
 
     /**
