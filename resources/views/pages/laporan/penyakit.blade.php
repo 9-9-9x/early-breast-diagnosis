@@ -124,6 +124,13 @@
         {{-- CARD 2: TABEL DATA --}}
         <div class="bg-white rounded-2xl shadow-lg p-6" id="tableCard">
             <div class="flex justify-end items-center gap-4 mb-6">
+                <button type="button" onclick="exportToExcel()"
+                    class="h-14 px-8 rounded-xl bg-[#3e7b27] text-white font-semibold text-2xl hover:bg-opacity-90 transition shadow-sm flex items-center justify-center gap-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    Export Excel
+                </button>
                 <button type="button" onclick="window.print()"
                     class="h-14 px-8 rounded-xl bg-[#3e7b27] text-white font-semibold text-2xl hover:bg-opacity-90 transition shadow-sm flex items-center justify-center">
                     Cetak Laporan
@@ -264,6 +271,20 @@
             btnFilter.addEventListener('click', function() {
                 loadData();
             });
+
+            // Export to Excel function
+            window.exportToExcel = function() {
+                const formData = new FormData(filterForm);
+                const params = new URLSearchParams();
+                
+                for (let [key, value] of formData.entries()) {
+                    if (value && key !== 'type') {
+                        params.append(key, value);
+                    }
+                }
+
+                window.location.href = `{{ route('report.export-disease') }}?${params.toString()}`;
+            };
 
             // Reset button click
             btnReset.addEventListener('click', function() {

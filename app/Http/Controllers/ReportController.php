@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\BreastResult;
+use App\Exports\PatientReportExport;
+use App\Exports\DiseaseReportExport;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
 {
@@ -161,5 +164,58 @@ class ReportController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    /**
+     * Export patient report to Excel
+     */
+    public function exportPatient($id)
+    {
+        $breastResult = BreastResult::with(['user.patientProfile'])->findOrFail($id);
+        $fileName = 'Laporan_Pasien_' . $breastResult->user->patientProfile->nama . '_' . date('YmdHis') . '.xls';
+
+        return Excel::download(new PatientReportExport($id), $fileName);
+    }
+
+    /**
+     * Export patient report to PDF
+     */
+    public function exportPatientPdf($id)
+    {
+        $breastResult = BreastResult::with(['user.patientProfile', 'user.riskFactor', 'breastExam'])
+            ->findOrFail($id);
+
+        // Pastikan data tidak null
+        $patient = $breastResult->user->patientProfile ?? (object)[];
+        $riskFactor = $breastResult->user->riskFactor ?? (object)[];
+        $breastExam = $breastResult->breastExam ?? (object)[];
+
+        $fileName = 'Laporan_Pasien_' . ($patient->nama ?? 'Unknown') . '_' . date('YmdHis') . '.pdf';
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.patient-report', [
+            'breastResult' => $breastResult,
+            'patient' => $patient,
+            'riskFactor' => $riskFactor,
+            'breastExam' => $breastExam,
+        ]);
+
+        return $pdf->download($fileName);
+    }
+
+    /**
+     * Export disease report to Excel
+     */
+    public function exportDisease(Request $request)
+    {
+        $filters = [
+            'tanggal_awal' => $request->input('periode_awal'),
+            'tanggal_akhir' => $request->input('periode_akhir'),
+            'hasil' => $request->input('hasil'),
+            'wilayah' => $request->input('wilayah'),
+        ];
+
+        $fileName = 'Rekapitulasi_Penyakit_' . date('YmdHis') . '.xls';
+
+        return Excel::download(new DiseaseReportExport($filters), $fileName);
     }
 }

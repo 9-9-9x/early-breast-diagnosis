@@ -39,6 +39,9 @@ Route::middleware('auth')->group(function () {
     Route::match(['POST', 'PUT'], '/deteksi-dini/update', [BreastExamController::class, 'update'])->name('deteksi-dini.update');
 
     Route::get('/laporan', [ReportController::class, 'index'])->name('report.index');
+    Route::get('/laporan/export-pasien/{id}', [ReportController::class, 'exportPatient'])->name('report.export-patient');
+    Route::get('/laporan/export-pasien-pdf/{id}', [ReportController::class, 'exportPatientPdf'])->name('report.export-patient-pdf');
+    Route::get('/laporan/export-penyakit', [ReportController::class, 'exportDisease'])->name('report.export-disease');
 
     Route::get('/pengaturan', [SettingsController::class, 'edit'])->name('pengaturan.edit');
     Route::post('/pengaturan', [SettingsController::class, 'update'])->name('pengaturan.update');
