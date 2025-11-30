@@ -25,7 +25,7 @@ class DiseaseReportExport implements WithEvents
                 $sheet = $event->sheet->getDelegate();
 
                 // Load template Excel
-                $templatePath = storage_path('app/public/OUTPUT REVVVV.xls');
+                $templatePath = resource_path('templates/OUTPUT REVVVV.xls');
                 $templateSpreadsheet = IOFactory::load($templatePath);
                 $templateSheet = $templateSpreadsheet->getSheetByName('Rekap');
 
