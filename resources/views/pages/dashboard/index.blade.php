@@ -15,7 +15,7 @@
         </div>
         <div class="bg-white rounded-2xl p-6 text-center shadow">
             <p class="text-3xl font-semibold text-[#123524]">Persentase</p>
-            <p class="mt-4 text-5xl font-semibold text-[#123524]">{{ $persentase }}%</p>
+            <p class="mt-4 text-5xl font-semibold text-[#123524]">{{ number_format($persentase, 2) }}%</p>
         </div>
     </div>
 
@@ -25,17 +25,36 @@
             <h2 class="text-2xl lg:text-3xl font-semibold text-center text-[#123524]">
                 DETEKSI DINI KANKER PAYUDARA<br class="hidden sm:block"> WILAYAH PUSKESMAS PAKUSARI
             </h2>
-            <div class="relative">
-                <form method="GET" action="{{ route('dashboard') }}" id="filterForm">
-                    <select name="filter" onchange="document.getElementById('filterForm').submit()" class="w-48 appearance-none border border-black rounded-md py-2 px-4 bg-white text-lg font-semibold text-[#123524] focus:outline-none focus:ring-2 focus:ring-[#85a947]">
-                        <option value="all" {{ $filter === 'all' ? 'selected' : '' }}>ALL</option>
-                        <option value="bulan_ini" {{ $filter === 'bulan_ini' ? 'selected' : '' }}>Bulan Ini</option>
-                        <option value="tahun_ini" {{ $filter === 'tahun_ini' ? 'selected' : '' }}>Tahun Ini</option>
-                    </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-700">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <!-- Filter Bulan -->
+                    <div class="relative w-full sm:w-64">
+                        <select id="filterPeriode" class="w-full h-12 px-4 text-lg border border-black rounded-lg appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-[#85a947] text-gray-500">
+                            <option value="all" class="text-black" {{ $filter === 'all' ? 'selected' : '' }}>Semua Periode</option>
+                            <option value="bulan_ini" class="text-black" {{ $filter === 'bulan_ini' ? 'selected' : '' }}>Bulan Ini</option>
+                            <option value="tahun_ini" class="text-black" {{ $filter === 'tahun_ini' ? 'selected' : '' }}>Tahun Ini</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
+                            <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
                     </div>
-                </form>
+                    <!-- Filter Wilayah -->
+                    <div class="relative w-full sm:w-64">
+                        <select id="filterWilayah" class="w-full h-12 px-4 text-lg border border-black rounded-lg appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-[#85a947] text-gray-500">
+                            <option value="all" class="text-black" {{ $wilayah === 'all' ? 'selected' : '' }}>Semua Wilayah</option>
+                            @foreach($wilayahList as $w)
+                                <option value="{{ $w['value'] }}" class="text-black" {{ $wilayah === $w['value'] ? 'selected' : '' }}>{{ $w['label'] }}</option>
+                            @endforeach
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
+                            <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -64,6 +83,8 @@
 {{-- Script untuk Chart.js tetap di sini karena spesifik untuk halaman ini --}}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    let chart;
+
     document.addEventListener('DOMContentLoaded', function () {
         const ctx = document.getElementById('detectionChart').getContext('2d');
         
@@ -77,7 +98,7 @@
         const maxValue = Math.max(...normalData, ...jinakData, ...ganasData);
         const yAxisMax = Math.ceil(maxValue / 10) * 10 + 10;
 
-        new Chart(ctx, {
+        chart = new Chart(ctx, {
             type: 'line',
             data: { 
                 labels, 
@@ -154,6 +175,52 @@
                 } 
             }
         });
+
+        // Handle filter changes without page refresh
+        const filterPeriode = document.getElementById('filterPeriode');
+        const filterWilayah = document.getElementById('filterWilayah');
+
+        function updateDashboard() {
+            const periode = filterPeriode.value;
+            const wilayah = filterWilayah.value;
+
+            // Fetch data via AJAX
+            fetch(`{{ route('dashboard') }}?filter=${periode}&wilayah=${wilayah}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update stats
+                document.querySelector('.grid > div:nth-child(2) > p:nth-child(2)').textContent = 
+                    new Intl.NumberFormat('id-ID').format(data.capaian);
+                document.querySelector('.grid > div:nth-child(3) > p:nth-child(2)').textContent = 
+                    parseFloat(data.persentase).toFixed(2) + '%';
+
+                // Update chart
+                chart.data.datasets[0].data = data.monthlyData.normal;
+                chart.data.datasets[1].data = data.monthlyData.jinak;
+                chart.data.datasets[2].data = data.monthlyData.ganas;
+
+                const maxValue = Math.max(...data.monthlyData.normal, ...data.monthlyData.jinak, ...data.monthlyData.ganas);
+                const yAxisMax = Math.ceil(maxValue / 10) * 10 + 10;
+                chart.options.scales.y.max = yAxisMax > 0 ? yAxisMax : 10;
+
+                chart.update();
+
+                // Update URL without refresh
+                const url = new URL(window.location);
+                url.searchParams.set('filter', periode);
+                url.searchParams.set('wilayah', wilayah);
+                window.history.pushState({}, '', url);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        filterPeriode.addEventListener('change', updateDashboard);
+        filterWilayah.addEventListener('change', updateDashboard);
     });
 </script>
 @endsection

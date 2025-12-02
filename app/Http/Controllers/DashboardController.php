@@ -15,9 +15,20 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
-        // Get filter parameter (default current year)
+        // Get filter parameters
         $filter = $request->get('filter', 'all');
+        $wilayah = $request->get('wilayah', 'all');
         $currentYear = date('Y');
+
+        // List wilayah (sama dengan di pasien.blade.php)
+        $wilayahList = [
+            ['value' => 'pakusari', 'label' => 'Pakusari'],
+            ['value' => 'patemon', 'label' => 'Patemon'],
+            ['value' => 'subo', 'label' => 'Subo'],
+            ['value' => 'sumberpinang', 'label' => 'Sumberpinang'],
+            ['value' => 'jatian', 'label' => 'Jatian'],
+            ['value' => 'bedadung', 'label' => 'Bedadung'],
+        ];
 
         // Get sasaran and target from database
         $dashboardTarget = DashboardTarget::where('tahun', $currentYear)->first();
@@ -34,19 +45,37 @@ class DashboardController extends Controller
         // Query untuk menghitung capaian berdasarkan filter
         $query = RiskFactor::query();
 
+        // Filter berdasarkan bulan/tahun
         if ($filter === 'bulan_ini') {
             $query->whereYear('created_at', $currentYear)
                 ->whereMonth('created_at', date('m'));
         } elseif ($filter === 'tahun_ini') {
             $query->whereYear('created_at', $currentYear);
         }
-        // 'all' tidak ada filter tambahan
+
+        // Filter berdasarkan wilayah (case-insensitive)
+        if ($wilayah !== 'all' && !empty($wilayah)) {
+            $query->whereHas('user.patientProfile', function ($q) use ($wilayah) {
+                $q->whereRaw('LOWER(desa_kelurahan) = ?', [strtolower($wilayah)]);
+            });
+        }
 
         $capaian = $query->count();
-        $persentase = $sasaran > 0 ? round(($capaian / $sasaran) * 100, 1) : 0;
+        $persentase = $sasaran > 0 ? round(($capaian / $sasaran) * 100, 2) : 0;
 
         // Data untuk chart - hasil pemeriksaan per bulan
-        $monthlyData = $this->getMonthlyData($filter, $currentYear);
+        $monthlyData = $this->getMonthlyData($filter, $currentYear, $wilayah);
+
+        // Return JSON for AJAX requests
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'sasaran' => $sasaran,
+                'target' => $target,
+                'capaian' => $capaian,
+                'persentase' => $persentase,
+                'monthlyData' => $monthlyData,
+            ]);
+        }
 
         return view('pages.dashboard.index', compact(
             'sasaran',
@@ -54,11 +83,13 @@ class DashboardController extends Controller
             'capaian',
             'persentase',
             'monthlyData',
-            'filter'
+            'filter',
+            'wilayah',
+            'wilayahList'
         ));
     }
 
-    private function getMonthlyData($filter, $currentYear)
+    private function getMonthlyData($filter, $currentYear, $wilayah = 'all')
     {
         $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         $data = [
@@ -77,6 +108,13 @@ class DashboardController extends Controller
 
         if ($filter === 'tahun_ini' || $filter === 'bulan_ini') {
             $query->whereYear('created_at', $currentYear);
+        }
+
+        // Filter berdasarkan wilayah (case-insensitive)
+        if ($wilayah !== 'all' && !empty($wilayah)) {
+            $query->whereHas('user.patientProfile', function ($q) use ($wilayah) {
+                $q->whereRaw('LOWER(desa_kelurahan) = ?', [strtolower($wilayah)]);
+            });
         }
 
         $results = $query->get();
