@@ -198,7 +198,7 @@
             <td>{{ $patient->nama ?? '..................................' }}</td>
             <td class="label">Perkawinan Pasangan</td>
             <td class="colon">:</td>
-            <td>Pasangan {{ $patient->perkawinan_pasangan ?? '....' }} kali</td>
+            <td>Pasangan {{ $patient->perkawinan_pasangan ?? '....' }} </td>
         </tr>
         <tr>
             <td class="label">Umur</td>
@@ -480,7 +480,7 @@
     <div style="font-weight: bold; margin-bottom: 5px; font-size: 9pt;">Hasil pemeriksaan payudara</div>
     
     <div class="result-section">
-        @if($breastResult->prediction == 0)
+        @if(strtolower($breastResult->prediction) === 'normal' || $breastResult->prediction == 0)
             <div class="result-item">
                 <span class="checkbox checked"></span> <strong>Normal</strong>
             </div>
@@ -494,14 +494,14 @@
             <div class="result-sub">
                 <span class="checkbox"></span> Pemeriksaan mammografi pada usia &gt;40 tahun
             </div>
-        @elseif($breastResult->prediction == 1)
+        @elseif(strtolower($breastResult->prediction) === 'jinak' || $breastResult->prediction == 1)
             <div class="result-item">
                 <span class="checkbox checked"></span> <strong>Suspect kelainan payudara jinak</strong>
             </div>
             <div class="result-sub">
                 <span class="checkbox checked"></span> Rujuk untuk pemeriksaan lanjutan
             </div>
-        @elseif($breastResult->prediction == 2)
+        @elseif(strtolower($breastResult->prediction) === 'ganas' || $breastResult->prediction == 2)
             <div class="result-item">
                 <span class="checkbox checked"></span> <strong>Suspect kelainan payudara ganas</strong>
             </div>
@@ -627,11 +627,12 @@
             position: relative;
         }
         .checkbox.checked::before {
-            content: '✓';
+            content: '\2713';
             font-weight: bold;
             position: absolute;
             left: 1px;
             top: -1px;
+            font-family: DejaVu Sans, sans-serif;
         }
         .risk-table {
             width: 100%;
@@ -835,154 +836,86 @@
 
     <!-- Faktor Risiko -->
     <div class="section-title">Faktor Risiko</div>
-    <table class="risk-table">
+    <table style="width: 100%; font-size: 8.5pt; border-collapse: collapse;">
         <tr>
-            <td colspan="2" style="text-align: center; font-weight: bold; border-bottom: 1px solid #000; padding: 3px 0;">
-                Ya &nbsp;&nbsp; Tidak &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Ya &nbsp;&nbsp; Tidak
-            </td>
+            <td style="width: 35%; padding: 2px;"></td>
+            <td style="width: 12%; text-align: center; font-weight: bold; padding: 2px;">Ya</td>
+            <td style="width: 12%; text-align: center; font-weight: bold; padding: 2px; border-right: 1px solid #ccc;">Tidak</td>
+            <td style="width: 29%; padding: 2px;"></td>
+            <td style="width: 6%; text-align: center; font-weight: bold; padding: 2px;">Ya</td>
+            <td style="width: 6%; text-align: center; font-weight: bold; padding: 2px;">Tidak</td>
         </tr>
         <tr>
-            <td class="left-col">
-                <div class="risk-item">
-                    <span class="checkbox {{ $riskFactor->menstruasi_dini ?? false ? 'checked' : '' }}"></span>
-                    <span class="checkbox {{ !($riskFactor->menstruasi_dini ?? false) ? 'checked' : '' }}"></span>
-                    - Menstruasi &lt;12 tahun
-                </div>
-            </td>
-            <td class="right-col">
-                <div class="risk-item">
-                    <span class="checkbox {{ $riskFactor->pernah_menyusui ?? false ? 'checked' : '' }}"></span>
-                    <span class="checkbox {{ !($riskFactor->pernah_menyusui ?? false) ? 'checked' : '' }}"></span>
-                    - Pernah menyusui
-                </div>
-            </td>
+            <td style="padding: 2px;">- Menstruasi &lt;12 tahun</td>
+            <td style="text-align: center;"><span class="checkbox {{ $riskFactor->menstruasi_dini ?? false ? 'checked' : '' }}"></span></td>
+            <td style="text-align: center; border-right: 1px solid #ccc;"><span class="checkbox {{ !($riskFactor->menstruasi_dini ?? false) ? 'checked' : '' }}"></span></td>
+            <td style="padding: 2px;">- Pernah menyusui</td>
+            <td style="text-align: center;"><span class="checkbox {{ $riskFactor->pernah_menyusui ?? false ? 'checked' : '' }}"></span></td>
+            <td style="text-align: center;"><span class="checkbox {{ !($riskFactor->pernah_menyusui ?? false) ? 'checked' : '' }}"></span></td>
         </tr>
         <tr>
-            <td class="left-col">
-                <div class="risk-item">
-                    <span class="checkbox {{ $riskFactor->merokok ?? false ? 'checked' : '' }}"></span>
-                    <span class="checkbox {{ !($riskFactor->merokok ?? false) ? 'checked' : '' }}"></span>
-                    - Merokok
-                </div>
-            </td>
-            <td class="right-col">
-                <div class="risk-item">
-                    <span class="checkbox {{ $riskFactor->pernah_melahirkan ?? false ? 'checked' : '' }}"></span>
-                    <span class="checkbox {{ !($riskFactor->pernah_melahirkan ?? false) ? 'checked' : '' }}"></span>
-                    - Pernah melahirkan
-                </div>
-            </td>
+            <td style="padding: 2px;">- Merokok</td>
+            <td style="text-align: center;"><span class="checkbox {{ $riskFactor->merokok ?? false ? 'checked' : '' }}"></span></td>
+            <td style="text-align: center; border-right: 1px solid #ccc;"><span class="checkbox {{ !($riskFactor->merokok ?? false) ? 'checked' : '' }}"></span></td>
+            <td style="padding: 2px;">- Pernah melahirkan</td>
+            <td style="text-align: center;"><span class="checkbox {{ $riskFactor->pernah_melahirkan ?? false ? 'checked' : '' }}"></span></td>
+            <td style="text-align: center;"><span class="checkbox {{ !($riskFactor->pernah_melahirkan ?? false) ? 'checked' : '' }}"></span></td>
         </tr>
         <tr>
-            <td class="left-col">
-                <div class="risk-item">
-                    <span class="checkbox {{ $riskFactor->terpapar_asap_rokok ?? false ? 'checked' : '' }}"></span>
-                    <span class="checkbox {{ !($riskFactor->terpapar_asap_rokok ?? false) ? 'checked' : '' }}"></span>
-                    - Terpapar asap rokok &gt;1 jam sehari
-                </div>
-            </td>
-            <td class="right-col">
-                <div class="risk-item">
-                    <span class="checkbox {{ $riskFactor->melahirkan_lebih_4_kali ?? false ? 'checked' : '' }}"></span>
-                    <span class="checkbox {{ !($riskFactor->melahirkan_lebih_4_kali ?? false) ? 'checked' : '' }}"></span>
-                    - Melahirkan &gt;=4 kali
-                </div>
-            </td>
+            <td style="padding: 2px;">- Terpapar asap rokok &gt;1 jam sehari</td>
+            <td style="text-align: center;"><span class="checkbox {{ $riskFactor->terpapar_asap_rokok ?? false ? 'checked' : '' }}"></span></td>
+            <td style="text-align: center; border-right: 1px solid #ccc;"><span class="checkbox {{ !($riskFactor->terpapar_asap_rokok ?? false) ? 'checked' : '' }}"></span></td>
+            <td style="padding: 2px;">- Melahirkan &gt;=4 kali</td>
+            <td style="text-align: center;"><span class="checkbox {{ $riskFactor->melahirkan_lebih_4_kali ?? false ? 'checked' : '' }}"></span></td>
+            <td style="text-align: center;"><span class="checkbox {{ !($riskFactor->melahirkan_lebih_4_kali ?? false) ? 'checked' : '' }}"></span></td>
         </tr>
         <tr>
-            <td class="left-col">
-                <div class="risk-item">
-                    <span class="checkbox {{ !($riskFactor->kurang_buah_sayur ?? true) ? 'checked' : '' }}"></span>
-                    <span class="checkbox {{ $riskFactor->kurang_buah_sayur ?? true ? 'checked' : '' }}"></span>
-                    - Sering konsumsi buah & sayur (5 porsi/hari)
-                </div>
-            </td>
-            <td class="right-col">
-                <div class="risk-item" style="font-weight: bold;">
-                    - KB hormonal
-                </div>
-            </td>
+            <td style="padding: 2px;">- Sering konsumsi buah & sayur</td>
+            <td style="text-align: center;"><span class="checkbox {{ !($riskFactor->kurang_buah_sayur ?? true) ? 'checked' : '' }}"></span></td>
+            <td style="text-align: center; border-right: 1px solid #ccc;"><span class="checkbox {{ $riskFactor->kurang_buah_sayur ?? true ? 'checked' : '' }}"></span></td>
+            <td style="padding: 2px; font-weight: bold;">- KB hormonal</td>
+            <td style="text-align: center;"></td>
+            <td style="text-align: center;"></td>
         </tr>
         <tr>
-            <td class="left-col">
-                <div class="risk-item">
-                    <span class="checkbox {{ $riskFactor->konsumsi_lemak ?? false ? 'checked' : '' }}"></span>
-                    <span class="checkbox {{ !($riskFactor->konsumsi_lemak ?? false) ? 'checked' : '' }}"></span>
-                    - Sering konsumsi makanan berlemak
-                </div>
-            </td>
-            <td class="right-col">
-                <div class="risk-item" style="padding-left: 15px;">
-                    <span class="checkbox {{ $riskFactor->kb_hormonal_pil_lebih_5_tahun ?? false ? 'checked' : '' }}"></span>
-                    <span class="checkbox {{ !($riskFactor->kb_hormonal_pil_lebih_5_tahun ?? false) ? 'checked' : '' }}"></span>
-                    * Pil &gt; 5 tahun
-                </div>
-            </td>
+            <td style="padding: 2px;">- Sering konsumsi makanan berlemak</td>
+            <td style="text-align: center;"><span class="checkbox {{ $riskFactor->konsumsi_lemak ?? false ? 'checked' : '' }}"></span></td>
+            <td style="text-align: center; border-right: 1px solid #ccc;"><span class="checkbox {{ !($riskFactor->konsumsi_lemak ?? false) ? 'checked' : '' }}"></span></td>
+            <td style="padding: 2px; padding-left: 15px;">* Pil &gt; 5 tahun</td>
+            <td style="text-align: center;"><span class="checkbox {{ $riskFactor->kb_hormonal_pil_lebih_5_tahun ?? false ? 'checked' : '' }}"></span></td>
+            <td style="text-align: center;"><span class="checkbox {{ !($riskFactor->kb_hormonal_pil_lebih_5_tahun ?? false) ? 'checked' : '' }}"></span></td>
         </tr>
         <tr>
-            <td class="left-col">
-                <div class="risk-item">
-                    <span class="checkbox {{ $riskFactor->konsumsi_pengawet ?? false ? 'checked' : '' }}"></span>
-                    <span class="checkbox {{ !($riskFactor->konsumsi_pengawet ?? false) ? 'checked' : '' }}"></span>
-                    - Sering konsumsi makanan berpengawet
-                </div>
-            </td>
-            <td class="right-col">
-                <div class="risk-item" style="padding-left: 15px;">
-                    <span class="checkbox {{ $riskFactor->kb_hormonal_suntik_lebih_5_tahun ?? false ? 'checked' : '' }}"></span>
-                    <span class="checkbox {{ !($riskFactor->kb_hormonal_suntik_lebih_5_tahun ?? false) ? 'checked' : '' }}"></span>
-                    * Suntik &gt; 5 tahun
-                </div>
-            </td>
+            <td style="padding: 2px;">- Sering konsumsi makanan berpengawet</td>
+            <td style="text-align: center;"><span class="checkbox {{ $riskFactor->konsumsi_pengawet ?? false ? 'checked' : '' }}"></span></td>
+            <td style="text-align: center; border-right: 1px solid #ccc;"><span class="checkbox {{ !($riskFactor->konsumsi_pengawet ?? false) ? 'checked' : '' }}"></span></td>
+            <td style="padding: 2px; padding-left: 15px;">* Suntik &gt; 5 tahun</td>
+            <td style="text-align: center;"><span class="checkbox {{ $riskFactor->kb_hormonal_suntik_lebih_5_tahun ?? false ? 'checked' : '' }}"></span></td>
+            <td style="text-align: center;"><span class="checkbox {{ !($riskFactor->kb_hormonal_suntik_lebih_5_tahun ?? false) ? 'checked' : '' }}"></span></td>
         </tr>
         <tr>
-            <td class="left-col">
-                <div class="risk-item">
-                    <span class="checkbox {{ $riskFactor->kurang_aktivitas_fisik ?? false ? 'checked' : '' }}"></span>
-                    <span class="checkbox {{ !($riskFactor->kurang_aktivitas_fisik ?? false) ? 'checked' : '' }}"></span>
-                    - Kurang aktivitas fisik (30 menit/hari)
-                </div>
-            </td>
-            <td class="right-col">
-                <div class="risk-item">
-                    <span class="checkbox {{ $riskFactor->riwayat_tumor_jinak_payudara ?? false ? 'checked' : '' }}"></span>
-                    <span class="checkbox {{ !($riskFactor->riwayat_tumor_jinak_payudara ?? false) ? 'checked' : '' }}"></span>
-                    - Riwayat tumor jinak payudara
-                </div>
-            </td>
+            <td style="padding: 2px;">- Kurang aktivitas fisik (30 menit/hari)</td>
+            <td style="text-align: center;"><span class="checkbox {{ $riskFactor->kurang_aktivitas_fisik ?? false ? 'checked' : '' }}"></span></td>
+            <td style="text-align: center; border-right: 1px solid #ccc;"><span class="checkbox {{ !($riskFactor->kurang_aktivitas_fisik ?? false) ? 'checked' : '' }}"></span></td>
+            <td style="padding: 2px;">- Riwayat tumor jinak payudara</td>
+            <td style="text-align: center;"><span class="checkbox {{ $riskFactor->riwayat_tumor_jinak_payudara ?? false ? 'checked' : '' }}"></span></td>
+            <td style="text-align: center;"><span class="checkbox {{ !($riskFactor->riwayat_tumor_jinak_payudara ?? false) ? 'checked' : '' }}"></span></td>
         </tr>
         <tr>
-            <td class="left-col">
-                <div class="risk-item">
-                    <span class="checkbox {{ $riskFactor->riwayat_keluarga ?? false ? 'checked' : '' }}"></span>
-                    <span class="checkbox {{ !($riskFactor->riwayat_keluarga ?? false) ? 'checked' : '' }}"></span>
-                    - Riwayat keluarga kanker
-                </div>
-                <div style="padding-left: 25px; font-size: 8pt;">sebutkan jenis kanker {{ $riskFactor->jenis_kanker ?? '..............' }}</div>
-            </td>
-            <td class="right-col">
-                <div class="risk-item">
-                    <span class="checkbox {{ $riskFactor->menopause_lebih_50_tahun ?? false ? 'checked' : '' }}"></span>
-                    <span class="checkbox {{ !($riskFactor->menopause_lebih_50_tahun ?? false) ? 'checked' : '' }}"></span>
-                    - Menopause &gt; 50 tahun
-                </div>
-            </td>
+            <td style="padding: 2px;">- Riwayat keluarga kanker<br><span style="font-size: 7pt; padding-left: 10px;">sebutkan: {{ $riskFactor->jenis_kanker ?? '............' }}</span></td>
+            <td style="text-align: center;"><span class="checkbox {{ $riskFactor->riwayat_keluarga ?? false ? 'checked' : '' }}"></span></td>
+            <td style="text-align: center; border-right: 1px solid #ccc;"><span class="checkbox {{ !($riskFactor->riwayat_keluarga ?? false) ? 'checked' : '' }}"></span></td>
+            <td style="padding: 2px;">- Menopause &gt; 50 tahun</td>
+            <td style="text-align: center;"><span class="checkbox {{ $riskFactor->menopause_lebih_50_tahun ?? false ? 'checked' : '' }}"></span></td>
+            <td style="text-align: center;"><span class="checkbox {{ !($riskFactor->menopause_lebih_50_tahun ?? false) ? 'checked' : '' }}"></span></td>
         </tr>
         <tr>
-            <td class="left-col">
-                <div class="risk-item">
-                    <span class="checkbox {{ $riskFactor->kehamilan_pertama_tua ?? false ? 'checked' : '' }}"></span>
-                    <span class="checkbox {{ !($riskFactor->kehamilan_pertama_tua ?? false) ? 'checked' : '' }}"></span>
-                    - Kehamilan pertama &gt;35 tahun
-                </div>
-            </td>
-            <td class="right-col">
-                <div class="risk-item">
-                    <span class="checkbox {{ $riskFactor->obesitas_imt_lebih_27 ?? false ? 'checked' : '' }}"></span>
-                    <span class="checkbox {{ !($riskFactor->obesitas_imt_lebih_27 ?? false) ? 'checked' : '' }}"></span>
-                    - Obesitas (IMT &gt;27 kg/m²)
-                </div>
-            </td>
+            <td style="padding: 2px;">- Kehamilan pertama &gt;35 tahun</td>
+            <td style="text-align: center;"><span class="checkbox {{ $riskFactor->kehamilan_pertama_tua ?? false ? 'checked' : '' }}"></span></td>
+            <td style="text-align: center; border-right: 1px solid #ccc;"><span class="checkbox {{ !($riskFactor->kehamilan_pertama_tua ?? false) ? 'checked' : '' }}"></span></td>
+            <td style="padding: 2px;">- Obesitas (IMT &gt;27 kg/m²)</td>
+            <td style="text-align: center;"><span class="checkbox {{ $riskFactor->obesitas_imt_lebih_27 ?? false ? 'checked' : '' }}"></span></td>
+            <td style="text-align: center;"><span class="checkbox {{ !($riskFactor->obesitas_imt_lebih_27 ?? false) ? 'checked' : '' }}"></span></td>
         </tr>
     </table>
 
@@ -1069,60 +1002,43 @@
     <div style="font-weight: bold; margin-bottom: 5px; font-size: 9pt;">Hasil pemeriksaan payudara</div>
     
     <div class="result-section">
-        @if(($breastResult->prediction ?? null) == 0)
-            <div class="result-item">
-                <span class="checkbox checked"></span> <strong>Normal</strong>
-            </div>
-            <div class="result-sub">
-                <span class="checkbox checked"></span> Anjurkan SADARI setiap bulan
-            </div>
-            <div class="result-sub">
-                <span class="checkbox"></span> Pemeriksaan Payudara 1 tahun sekali
-            </div>
-            <div class="result-sub">
-                <span class="checkbox"></span> Pemeriksaan mammografi pada usia &gt;40 tahun
-            </div>
-        @elseif(($breastResult->prediction ?? null) == 1)
-            <div class="result-item">
-                <span class="checkbox checked"></span> <strong>Suspect kelainan payudara jinak</strong>
-            </div>
-            <div class="result-sub">
-                <span class="checkbox checked"></span> Rujuk untuk pemeriksaan lanjutan
-            </div>
-        @elseif(($breastResult->prediction ?? null) == 2)
-            <div class="result-item">
-                <span class="checkbox checked"></span> <strong>Suspect kelainan payudara ganas</strong>
-            </div>
-            <div class="result-sub">
-                <span class="checkbox checked"></span> Rujuk untuk pemeriksaan lanjutan
-            </div>
-        @else
-            <!-- Tampilan default jika belum ada prediction -->
-            <div class="result-item">
-                <span class="checkbox"></span> <strong>Normal</strong>
-            </div>
-            <div class="result-sub">
-                <span class="checkbox"></span> Anjurkan SADARI setiap bulan
-            </div>
-            <div class="result-sub">
-                <span class="checkbox"></span> Pemeriksaan Payudara 1 tahun sekali
-            </div>
-            <div class="result-sub">
-                <span class="checkbox"></span> Pemeriksaan mammografi pada usia &gt;40 tahun
-            </div>
-            <div class="result-item" style="margin-top: 8px;">
-                <span class="checkbox"></span> <strong>Suspect kelainan payudara jinak</strong>
-            </div>
-            <div class="result-sub">
-                <span class="checkbox"></span> Rujuk untuk pemeriksaan lanjutan
-            </div>
-            <div class="result-item" style="margin-top: 8px;">
-                <span class="checkbox"></span> <strong>Suspect kelainan payudara ganas</strong>
-            </div>
-            <div class="result-sub">
-                <span class="checkbox"></span> Rujuk untuk pemeriksaan lanjutan
-            </div>
-        @endif
+        @php
+            $predictionValue = $breastResult->prediction ?? '';
+            $predictionLower = strtolower(trim($predictionValue));
+            $isNormal = $predictionLower === 'normal' || $predictionValue == 0 || $predictionValue === '0';
+            $isJinak = str_contains($predictionLower, 'jinak') || $predictionValue == 1 || $predictionValue === '1';
+            $isGanas = str_contains($predictionLower, 'ganas') || $predictionValue == 2 || $predictionValue === '2';
+        @endphp
+        
+        <!-- Normal Section - Always show -->
+        <div class="result-item">
+            <span class="checkbox {{ $isNormal ? 'checked' : '' }}"></span> <strong>Normal</strong>
+        </div>
+        <div class="result-sub">
+            <span class="checkbox {{ $breastResult->sadari_bulanan ? 'checked' : '' }}"></span> Anjurkan SADARI setiap bulan
+        </div>
+        <div class="result-sub">
+            <span class="checkbox {{ $breastResult->periksa_tahunan ? 'checked' : '' }}"></span> Pemeriksaan Payudara 1 tahun sekali
+        </div>
+        <div class="result-sub">
+            <span class="checkbox {{ $breastResult->mammografi_40_plus ? 'checked' : '' }}"></span> Pemeriksaan mammografi pada usia &gt;40 tahun
+        </div>
+
+        <!-- Jinak Section - Always show -->
+        <div class="result-item" style="margin-top: 8px;">
+            <span class="checkbox {{ $isJinak ? 'checked' : '' }}"></span> <strong>Suspect kelainan payudara jinak</strong>
+        </div>
+        <div class="result-sub">
+            <span class="checkbox {{ ($isJinak && $breastResult->rujuk_lanjutan) ? 'checked' : '' }}"></span> Rujuk untuk pemeriksaan lanjutan
+        </div>
+
+        <!-- Ganas Section - Always show -->
+        <div class="result-item" style="margin-top: 8px;">
+            <span class="checkbox {{ $isGanas ? 'checked' : '' }}"></span> <strong>Suspect kelainan payudara ganas</strong>
+        </div>
+        <div class="result-sub">
+            <span class="checkbox {{ ($isGanas && $breastResult->rujuk_lanjutan) ? 'checked' : '' }}"></span> Rujuk untuk pemeriksaan lanjutan
+        </div>
     </div>
 </body>
 </html>
