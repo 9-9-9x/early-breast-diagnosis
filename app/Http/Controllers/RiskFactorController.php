@@ -28,9 +28,23 @@ class RiskFactorController extends Controller
             abort(404, 'User ID is missing.');
         }
 
-        $user = User::findOrFail($user_id);
+        $user = User::with('patientProfile')->findOrFail($user_id);
 
-        return view('pages.faktor-resiko.create', compact('user'));
+        // Calculate BMI and obesity status from patient profile
+        $isObese = false;
+        $bmi = null;
+
+        if ($user->patientProfile && $user->patientProfile->bb && $user->patientProfile->tb) {
+            $weightKg = $user->patientProfile->bb;
+            $heightM = $user->patientProfile->tb / 100; // Convert cm to meters
+
+            if ($heightM > 0) {
+                $bmi = $weightKg / ($heightM * $heightM);
+                $isObese = $bmi > 27; // Indonesian obesity threshold
+            }
+        }
+
+        return view('pages.faktor-resiko.create', compact('user', 'isObese', 'bmi'));
     }
 
     /**
