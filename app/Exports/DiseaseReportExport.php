@@ -156,13 +156,12 @@ class DiseaseReportExport implements WithEvents
             '30-39' => 21,
             '40-49' => 22,
             '50-59' => 23,
-            '>= 60' => 24,
         ];
 
         $grandTotal = ['normal' => 0, 'jinak' => 0, 'ganas' => 0, 'total' => 0];
 
-        foreach ($statistics as $ageGroup => $data) {
-            $row = $rowMapping[$ageGroup];
+        foreach ($rowMapping as $ageGroup => $row) {
+            $data = $statistics[$ageGroup];
 
             // Kolom D: Normal
             $sheet->setCellValue('D' . $row, $data['normal']);
@@ -183,8 +182,8 @@ class DiseaseReportExport implements WithEvents
             $grandTotal['total'] += $data['total'];
         }
 
-        // Row untuk Total Keseluruhan (sesuaikan dengan template, misalnya row 25)
-        $totalRow = 25;
+        // Row untuk Total Keseluruhan di row 24
+        $totalRow = 24;
         $sheet->setCellValue('D' . $totalRow, $grandTotal['normal']);
         $sheet->setCellValue('E' . $totalRow, $grandTotal['jinak']);
         $sheet->setCellValue('F' . $totalRow, $grandTotal['ganas']);
