@@ -29,7 +29,7 @@ class PatientProfileController extends Controller
         $validatedData = $request->validate([
             'nama' => 'required|string|max:255',
             'umur' => 'required|integer|min:0',
-            'suku_bangsa' => 'nullable|string|max:255',
+            'suku_bangsa' => 'required|string|max:255',
             'agama' => 'required|string|max:255',
             'bb' => 'required|numeric|min:0',
             'tb' => 'required|numeric|min:0',

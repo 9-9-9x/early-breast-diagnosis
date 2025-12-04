@@ -61,7 +61,7 @@
                             </div>
 
                             <div>
-                                <label for="suku_bangsa" class="{{ $labelClasses }}">Suku Bangsa</label>
+                                <label for="suku_bangsa" class="{{ $labelClasses }}">Suku Bangsa {!! $requiredMark !!}</label>
                                 <div class="relative">
                                     <select id="suku_bangsa" name="suku_bangsa"
                                         class="{{ $inputClasses }} appearance-none">
