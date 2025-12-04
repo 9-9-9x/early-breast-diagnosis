@@ -218,19 +218,21 @@
                                     </div>
                                     <div class="flex items-center gap-x-8 w-full md:w-auto">
                                         @if (isset($question['auto']) && $question['auto'])
-                                            {{-- For auto-filled obesitas field --}}
+                                            {{-- For auto-filled obesitas field (disabled, auto-calculated from BMI) --}}
                                             <div class="w-1/2 md:w-14"><input type="radio"
                                                     name="{{ $question['name'] }}" id="{{ $question['name'] }}_yes"
-                                                    value="1" class="hidden peer" @checked(old($question['name'], $obesitasValue) == '1')><label
+                                                    value="1" class="hidden peer" disabled @checked(old($question['name'], $obesitasValue) == '1')><label
                                                     for="{{ $question['name'] }}_yes"
-                                                    class="{{ $radioLabelClasses }} {{ $radioPeerCheckedClasses }}"><span
+                                                    class="{{ $radioLabelClasses }} {{ $radioPeerCheckedClasses }} cursor-not-allowed pointer-events-none"><span
                                                         class="hidden peer-checked:block text-3xl">✅</span></label></div>
                                             <div class="w-1/2 md:w-14"><input type="radio"
                                                     name="{{ $question['name'] }}" id="{{ $question['name'] }}_no"
-                                                    value="0" class="hidden peer" @checked(old($question['name'], $obesitasValue) == '0')><label
+                                                    value="0" class="hidden peer" disabled @checked(old($question['name'], $obesitasValue) == '0')><label
                                                     for="{{ $question['name'] }}_no"
-                                                    class="{{ $radioLabelClasses }} {{ $radioPeerCheckedClasses }}"><span
+                                                    class="{{ $radioLabelClasses }} {{ $radioPeerCheckedClasses }} cursor-not-allowed pointer-events-none"><span
                                                         class="hidden peer-checked:block text-3xl">✅</span></label></div>
+                                            {{-- Hidden input to ensure value is submitted --}}
+                                            <input type="hidden" name="{{ $question['name'] }}" value="{{ old($question['name'], $obesitasValue) }}">
                                         @else
                                             <div class="w-1/2 md:w-14"><input type="radio"
                                                     name="{{ $question['name'] }}" id="{{ $question['name'] }}_yes"
