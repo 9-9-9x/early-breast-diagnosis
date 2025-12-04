@@ -153,10 +153,6 @@
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </div>
-                    <button type="button" onclick="window.print()"
-                        class="w-full sm:w-auto h-14 px-8 rounded-xl bg-[#3e7b27] text-white font-semibold text-2xl hover:bg-opacity-90 transition shadow-sm flex items-center justify-center flex-shrink-0">
-                        Cetak Laporan
-                    </button>
                 </div>
             </div>
 
