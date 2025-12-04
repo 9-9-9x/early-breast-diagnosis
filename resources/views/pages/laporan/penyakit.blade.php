@@ -23,17 +23,10 @@
                         <div class="flex items-center gap-4">
                             <label for="periode_awal" class="w-48 text-xl font-medium text-black">Periode Awal</label>
                             <div class="relative w-full">
-                                <input type="date" name="periode_awal" id="periode_awal" 
+                                <input type="date" name="periode_awal" id="periode_awal"
                                     value="{{ request('periode_awal') }}"
                                     style="appearance: none; -webkit-appearance: none; -moz-appearance: none;"
-                                    class="w-full h-12 pl-4 pr-12 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947] [&::-webkit-calendar-picker-indicator]:hidden">
-                                <button type="button" onclick="document.getElementById('periode_awal').showPicker()" class="absolute inset-y-0 right-0 flex items-center pr-4 cursor-pointer hover:opacity-70 transition">
-                                    <svg class="w-7 h-7 text-gray-500" fill="none" viewBox="0 0 24 24"
-                                        stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
-                                </button>
+                                    class="w-full h-12 pl-4 pr-4 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947] [&::-webkit-calendar-picker-indicator]:hidden">
                             </div>
                         </div>
 
@@ -41,17 +34,10 @@
                         <div class="flex items-center gap-4">
                             <label for="periode_akhir" class="w-48 text-xl font-medium text-black">Periode Akhir</label>
                             <div class="relative w-full">
-                                <input type="date" name="periode_akhir" id="periode_akhir" 
+                                <input type="date" name="periode_akhir" id="periode_akhir"
                                     value="{{ request('periode_akhir') }}"
                                     style="appearance: none; -webkit-appearance: none; -moz-appearance: none;"
-                                    class="w-full h-12 pl-4 pr-12 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947] [&::-webkit-calendar-picker-indicator]:hidden">
-                                <button type="button" onclick="document.getElementById('periode_akhir').showPicker()" class="absolute inset-y-0 right-0 flex items-center pr-4 cursor-pointer hover:opacity-70 transition">
-                                    <svg class="w-7 h-7 text-gray-500" fill="none" viewBox="0 0 24 24"
-                                        stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
-                                </button>
+                                    class="w-full h-12 pl-4 pr-4 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947] [&::-webkit-calendar-picker-indicator]:hidden">
                             </div>
                         </div>
 
@@ -233,7 +219,7 @@
                 const formData = new FormData(filterForm);
                 const params = new URLSearchParams();
                 params.append('type', 'penyakit');
-                
+
                 for (let [key, value] of formData.entries()) {
                     if (value && key !== 'type') {
                         params.append(key, value);
@@ -251,9 +237,9 @@
                 .then(html => {
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(html, 'text/html');
-                    
+
                     const newTableContent = doc.getElementById('tableContent');
-                    
+
                     if (newTableContent) {
                         document.getElementById('tableContent').innerHTML = newTableContent.innerHTML;
                     }
@@ -272,7 +258,7 @@
             window.exportToExcel = function() {
                 const formData = new FormData(filterForm);
                 const params = new URLSearchParams();
-                
+
                 for (let [key, value] of formData.entries()) {
                     if (value && key !== 'type') {
                         params.append(key, value);

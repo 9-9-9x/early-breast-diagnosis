@@ -23,17 +23,10 @@
                         <div class="flex items-center gap-4">
                             <label for="periode_awal" class="w-48 text-xl font-medium text-black">Periode Awal</label>
                             <div class="relative w-full">
-                                <input type="date" name="periode_awal" id="periode_awal" 
+                                <input type="date" name="periode_awal" id="periode_awal"
                                     value="{{ request('periode_awal') }}"
                                     style="appearance: none; -webkit-appearance: none; -moz-appearance: none;"
-                                    class="w-full h-12 pl-4 pr-12 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947] [&::-webkit-calendar-picker-indicator]:hidden">
-                                <button type="button" onclick="document.getElementById('periode_awal').showPicker()" class="absolute inset-y-0 right-0 flex items-center pr-4 cursor-pointer hover:opacity-70 transition">
-                                    <svg class="w-7 h-7 text-gray-500" fill="none" viewBox="0 0 24 24"
-                                        stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
-                                </button>
+                                    class="w-full h-12 pl-4 pr-4 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947] [&::-webkit-calendar-picker-indicator]:hidden">
                             </div>
                         </div>
 
@@ -41,17 +34,10 @@
                         <div class="flex items-center gap-4">
                             <label for="periode_akhir" class="w-48 text-xl font-medium text-black">Periode Akhir</label>
                             <div class="relative w-full">
-                                <input type="date" name="periode_akhir" id="periode_akhir" 
+                                <input type="date" name="periode_akhir" id="periode_akhir"
                                     value="{{ request('periode_akhir') }}"
                                     style="appearance: none; -webkit-appearance: none; -moz-appearance: none;"
-                                    class="w-full h-12 pl-4 pr-12 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947] [&::-webkit-calendar-picker-indicator]:hidden">
-                                <button type="button" onclick="document.getElementById('periode_akhir').showPicker()" class="absolute inset-y-0 right-0 flex items-center pr-4 cursor-pointer hover:opacity-70 transition">
-                                    <svg class="w-7 h-7 text-gray-500" fill="none" viewBox="0 0 24 24"
-                                        stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
-                                </button>
+                                    class="w-full h-12 pl-4 pr-4 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947] [&::-webkit-calendar-picker-indicator]:hidden">
                             </div>
                         </div>
 
@@ -144,7 +130,7 @@
                 </div>
                 <div class="w-full md:w-auto flex flex-col sm:flex-row items-center gap-4">
                     <div class="relative w-full">
-                        <input type="search" id="searchInput" placeholder="Search nama pasien.." 
+                        <input type="search" id="searchInput" placeholder="Search nama pasien.."
                             value="{{ request('search') }}"
                             class="w-full sm:w-80 h-12 pl-5 pr-10 rounded-xl border border-black focus:outline-none focus:ring-2 focus:ring-[#85a947] text-lg">
                         <svg class="w-5 h-5 absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" fill="none"
@@ -206,14 +192,14 @@
                                 </td>
                                 <td class="py-4 text-lg">
                                     <div class="flex gap-2">
-                                        <a href="{{ route('report.export-patient', $result->id) }}" 
+                                        <a href="{{ route('report.export-patient', $result->id) }}"
                                            class="inline-flex items-center px-3 py-2 bg-[#3e7b27] text-white rounded-lg hover:bg-opacity-90 transition text-sm">
                                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                             </svg>
                                             Excel
                                         </a>
-                                        <a href="{{ route('report.export-patient-pdf', $result->id) }}" 
+                                        <a href="{{ route('report.export-patient-pdf', $result->id) }}"
                                            class="inline-flex items-center px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-opacity-90 transition text-sm">
                                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
@@ -244,7 +230,7 @@
                         @if ($results->onFirstPage())
                             <span class="px-4 py-2 border rounded bg-gray-100 text-gray-400 cursor-not-allowed">Previous</span>
                         @else
-                            <a href="{{ $results->appends(request()->query())->previousPageUrl() }}" 
+                            <a href="{{ $results->appends(request()->query())->previousPageUrl() }}"
                                class="px-4 py-2 border rounded hover:bg-gray-100 transition">Previous</a>
                         @endif
 
@@ -255,7 +241,7 @@
                         @endphp
 
                         @if($start > 1)
-                            <a href="{{ $results->appends(request()->query())->url(1) }}" 
+                            <a href="{{ $results->appends(request()->query())->url(1) }}"
                                class="px-4 py-2 border rounded hover:bg-gray-100 transition">1</a>
                             @if($start > 2)
                                 <span class="px-2">...</span>
@@ -266,7 +252,7 @@
                             @if ($page == $results->currentPage())
                                 <span class="px-4 py-2 border rounded bg-[#3e7b27] text-white font-semibold">{{ $page }}</span>
                             @else
-                                <a href="{{ $results->appends(request()->query())->url($page) }}" 
+                                <a href="{{ $results->appends(request()->query())->url($page) }}"
                                    class="px-4 py-2 border rounded hover:bg-gray-100 transition">{{ $page }}</a>
                             @endif
                         @endfor
@@ -275,13 +261,13 @@
                             @if($end < $results->lastPage() - 1)
                                 <span class="px-2">...</span>
                             @endif
-                            <a href="{{ $results->appends(request()->query())->url($results->lastPage()) }}" 
+                            <a href="{{ $results->appends(request()->query())->url($results->lastPage()) }}"
                                class="px-4 py-2 border rounded hover:bg-gray-100 transition">{{ $results->lastPage() }}</a>
                         @endif
 
                         {{-- Next Button --}}
                         @if ($results->hasMorePages())
-                            <a href="{{ $results->appends(request()->query())->nextPageUrl() }}" 
+                            <a href="{{ $results->appends(request()->query())->nextPageUrl() }}"
                                class="px-4 py-2 border rounded hover:bg-gray-100 transition">Next</a>
                         @else
                             <span class="px-4 py-2 border rounded bg-gray-100 text-gray-400 cursor-not-allowed">Next</span>
@@ -360,7 +346,7 @@
                 params.append('type', 'pasien');
                 params.append('per_page', perPage);
                 if (search) params.append('search', search);
-                
+
                 for (let [key, value] of formData.entries()) {
                     if (value && key !== 'type') {
                         params.append(key, value);
@@ -378,10 +364,10 @@
                 .then(html => {
                     const parser = new DOMParser();
                     const doc = parser.parseFromString(html, 'text/html');
-                    
+
                     const newTableContent = doc.getElementById('tableContent');
                     const newPaginationInfo = doc.getElementById('paginationInfo');
-                    
+
                     if (newTableContent) {
                         document.getElementById('tableContent').innerHTML = newTableContent.innerHTML;
                     }
