@@ -69,34 +69,34 @@
                 {{-- Baris Kulit --}}
                 <div class="{{ $formRowClasses }}">
                     <label class="{{ $labelClasses }}">Kulit <span class="text-red-600">*</span></label>
-                    <div class="relative w-full max-w-md" id="dropdown-kulit">
+                    <div class="relative w-full max-w-md" id="dropdown-kulit" style="z-index: 100;">
                         <button type="button" onclick="toggleDropdown('kulit')"
                                 style="border: 1px solid #000; background-color: #fff;"
                                 class="w-full h-12 px-4 text-lg rounded-lg text-left flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-[#85a947]">
-                            <span id="kulit-display" style="color: #6b7280;">Pilih kondisi kulit</span>
+                            <span id="kulit-display" style="color: #6b7280; font-size: 18px;">Pilih kondisi kulit</span>
                             <svg id="kulit-arrow" class="w-5 h-5 flex-shrink-0 transition-transform duration-200" style="color: #374151;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                             </svg>
                         </button>
-                        <div id="kulit-options" class="hidden absolute z-10 mt-1 w-full bg-white shadow-lg rounded-lg overflow-hidden" style="border: 1px solid #000;">
-                            <label class="flex items-center px-4 py-2.5 hover:bg-gray-100 cursor-pointer" style="color: #000;">
-                                <input type="checkbox" name="kulit_normal" value="1" onchange="handleKulitChange(this, 'Normal', true)" class="w-4 h-4 mr-3">
+                        <div id="kulit-options" class="hidden absolute mt-1 w-full bg-white shadow-lg rounded-lg overflow-hidden" style="border: 1px solid #000; z-index: 999;">
+                            <label class="flex items-center cursor-pointer" style="color: #000; padding: 12px 16px; font-size: 16px;">
+                                <input type="checkbox" name="kulit_normal" value="1" onchange="handleKulitChange(this, 'Normal', true)" style="width: 18px; height: 18px; margin-right: 12px;">
                                 <span>Normal</span>
                             </label>
-                            <label class="flex items-center px-4 py-2.5 hover:bg-gray-100 cursor-pointer" style="border-top: 1px solid #e5e7eb; color: #000;">
-                                <input type="checkbox" name="kulit_abnormal" value="1" onchange="handleKulitChange(this, 'Abnormal', false)" class="w-4 h-4 mr-3">
+                            <label class="flex items-center cursor-pointer" style="border-top: 1px solid #e5e7eb; color: #000; padding: 12px 16px; font-size: 16px;">
+                                <input type="checkbox" name="kulit_abnormal" value="1" onchange="handleKulitChange(this, 'Abnormal', false)" style="width: 18px; height: 18px; margin-right: 12px;">
                                 <span>Abnormal</span>
                             </label>
-                            <label class="flex items-center px-4 py-2.5 hover:bg-gray-100 cursor-pointer" style="border-top: 1px solid #e5e7eb; color: #000;">
-                                <input type="checkbox" name="kulit_jeruk" value="1" onchange="handleKulitChange(this, 'Kulit Jeruk', false)" class="w-4 h-4 mr-3">
+                            <label class="flex items-center cursor-pointer" style="border-top: 1px solid #e5e7eb; color: #000; padding: 12px 16px; font-size: 16px;">
+                                <input type="checkbox" name="kulit_jeruk" value="1" onchange="handleKulitChange(this, 'Kulit Jeruk', false)" style="width: 18px; height: 18px; margin-right: 12px;">
                                 <span>Kulit Jeruk</span>
                             </label>
-                            <label class="flex items-center px-4 py-2.5 hover:bg-gray-100 cursor-pointer" style="border-top: 1px solid #e5e7eb; color: #000;">
-                                <input type="checkbox" name="penarikan_kulit" value="1" onchange="handleKulitChange(this, 'Penarikan Kulit', false)" class="w-4 h-4 mr-3">
+                            <label class="flex items-center cursor-pointer" style="border-top: 1px solid #e5e7eb; color: #000; padding: 12px 16px; font-size: 16px;">
+                                <input type="checkbox" name="penarikan_kulit" value="1" onchange="handleKulitChange(this, 'Penarikan Kulit', false)" style="width: 18px; height: 18px; margin-right: 12px;">
                                 <span>Penarikan Kulit</span>
                             </label>
-                            <label class="flex items-center px-4 py-2.5 hover:bg-gray-100 cursor-pointer" style="border-top: 1px solid #e5e7eb; color: #000;">
-                                <input type="checkbox" name="luka_basah_kulit" value="1" onchange="handleKulitChange(this, 'Luka Basah', false)" class="w-4 h-4 mr-3">
+                            <label class="flex items-center cursor-pointer" style="border-top: 1px solid #e5e7eb; color: #000; padding: 12px 16px; font-size: 16px;">
+                                <input type="checkbox" name="luka_basah_kulit" value="1" onchange="handleKulitChange(this, 'Luka Basah', false)" style="width: 18px; height: 18px; margin-right: 12px;">
                                 <span>Luka Basah</span>
                             </label>
                         </div>
@@ -106,34 +106,34 @@
                 {{-- Baris Areola/Papilla --}}
                 <div class="{{ $formRowClasses }}">
                     <label class="{{ $labelClasses }}">Areola/Papilla <span class="text-red-600">*</span></label>
-                    <div class="relative w-full max-w-md" id="dropdown-areola">
+                    <div class="relative w-full max-w-md" id="dropdown-areola" style="z-index: 99;">
                         <button type="button" onclick="toggleDropdown('areola')"
                                 style="border: 1px solid #000; background-color: #fff;"
                                 class="w-full h-12 px-4 text-lg rounded-lg text-left flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-[#85a947]">
-                            <span id="areola-display" style="color: #6b7280;">Pilih kondisi areola/papilla</span>
+                            <span id="areola-display" style="color: #6b7280; font-size: 18px;">Pilih kondisi areola/papilla</span>
                             <svg id="areola-arrow" class="w-5 h-5 flex-shrink-0 transition-transform duration-200" style="color: #374151;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                             </svg>
                         </button>
-                        <div id="areola-options" class="hidden absolute z-10 mt-1 w-full bg-white shadow-lg rounded-lg overflow-hidden" style="border: 1px solid #000;">
-                            <label class="flex items-center px-4 py-2.5 hover:bg-gray-100 cursor-pointer" style="color: #000;">
-                                <input type="checkbox" name="areola_normal" value="1" onchange="handleAreolaChange(this, 'Normal', true)" class="w-4 h-4 mr-3">
+                        <div id="areola-options" class="hidden absolute mt-1 w-full bg-white shadow-lg rounded-lg overflow-hidden" style="border: 1px solid #000; z-index: 999;">
+                            <label class="flex items-center cursor-pointer" style="color: #000; padding: 12px 16px; font-size: 16px;">
+                                <input type="checkbox" name="areola_normal" value="1" onchange="handleAreolaChange(this, 'Normal', true)" style="width: 18px; height: 18px; margin-right: 12px;">
                                 <span>Normal</span>
                             </label>
-                            <label class="flex items-center px-4 py-2.5 hover:bg-gray-100 cursor-pointer" style="border-top: 1px solid #e5e7eb; color: #000;">
-                                <input type="checkbox" name="areola_abnormal" value="1" onchange="handleAreolaChange(this, 'Abnormal', false)" class="w-4 h-4 mr-3">
+                            <label class="flex items-center cursor-pointer" style="border-top: 1px solid #e5e7eb; color: #000; padding: 12px 16px; font-size: 16px;">
+                                <input type="checkbox" name="areola_abnormal" value="1" onchange="handleAreolaChange(this, 'Abnormal', false)" style="width: 18px; height: 18px; margin-right: 12px;">
                                 <span>Abnormal</span>
                             </label>
-                            <label class="flex items-center px-4 py-2.5 hover:bg-gray-100 cursor-pointer" style="border-top: 1px solid #e5e7eb; color: #000;">
-                                <input type="checkbox" name="retraksi" value="1" onchange="handleAreolaChange(this, 'Retraksi', false)" class="w-4 h-4 mr-3">
+                            <label class="flex items-center cursor-pointer" style="border-top: 1px solid #e5e7eb; color: #000; padding: 12px 16px; font-size: 16px;">
+                                <input type="checkbox" name="retraksi" value="1" onchange="handleAreolaChange(this, 'Retraksi', false)" style="width: 18px; height: 18px; margin-right: 12px;">
                                 <span>Retraksi</span>
                             </label>
-                            <label class="flex items-center px-4 py-2.5 hover:bg-gray-100 cursor-pointer" style="border-top: 1px solid #e5e7eb; color: #000;">
-                                <input type="checkbox" name="luka_basah_areola" value="1" onchange="handleAreolaChange(this, 'Luka Basah', false)" class="w-4 h-4 mr-3">
+                            <label class="flex items-center cursor-pointer" style="border-top: 1px solid #e5e7eb; color: #000; padding: 12px 16px; font-size: 16px;">
+                                <input type="checkbox" name="luka_basah_areola" value="1" onchange="handleAreolaChange(this, 'Luka Basah', false)" style="width: 18px; height: 18px; margin-right: 12px;">
                                 <span>Luka Basah</span>
                             </label>
-                            <label class="flex items-center px-4 py-2.5 hover:bg-gray-100 cursor-pointer" style="border-top: 1px solid #e5e7eb; color: #000;">
-                                <input type="checkbox" name="cairan_abnormal" value="1" onchange="handleAreolaChange(this, 'Cairan Abnormal dari Puting Susu', false)" class="w-4 h-4 mr-3">
+                            <label class="flex items-center cursor-pointer" style="border-top: 1px solid #e5e7eb; color: #000; padding: 12px 16px; font-size: 16px;">
+                                <input type="checkbox" name="cairan_abnormal" value="1" onchange="handleAreolaChange(this, 'Cairan Abnormal dari Puting Susu', false)" style="width: 18px; height: 18px; margin-right: 12px;">
                                 <span>Cairan Abnormal dari Puting Susu</span>
                             </label>
                         </div>
