@@ -261,6 +261,7 @@
                             @if($end < $results->lastPage() - 1)
                                 <span class="px-2">...</span>
                             @endif
+                            <div>test</div>
                             <a href="{{ $results->appends(request()->query())->url($results->lastPage()) }}"
                                class="px-4 py-2 border rounded hover:bg-gray-100 transition">{{ $results->lastPage() }}</a>
                         @endif
