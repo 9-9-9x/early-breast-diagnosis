@@ -25,8 +25,7 @@
                             <div class="relative w-full">
                                 <input type="date" name="periode_awal" id="periode_awal"
                                     value="{{ request('periode_awal') }}"
-                                    style="appearance: none; -webkit-appearance: none; -moz-appearance: none;"
-                                    class="w-full h-12 pl-4 pr-4 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947] [&::-webkit-calendar-picker-indicator]:hidden">
+                                    class="w-full h-12 pl-4 pr-4 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947]">
                             </div>
                         </div>
 
@@ -36,8 +35,7 @@
                             <div class="relative w-full">
                                 <input type="date" name="periode_akhir" id="periode_akhir"
                                     value="{{ request('periode_akhir') }}"
-                                    style="appearance: none; -webkit-appearance: none; -moz-appearance: none;"
-                                    class="w-full h-12 pl-4 pr-4 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947] [&::-webkit-calendar-picker-indicator]:hidden">
+                                    class="w-full h-12 pl-4 pr-4 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947]">
                             </div>
                         </div>
 
@@ -159,48 +157,54 @@
                             <th class="{{ $headerClasses }}">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="text-black">
                         @forelse($results as $index => $result)
                             <tr class="border-b border-gray-200">
-                                <td class="py-4 text-lg">{{ $results->firstItem() + $index }}</td>
-                                <td class="py-4 text-lg">
+                                <td class="py-4 text-lg text-black">{{ $results->firstItem() + $index }}</td>
+                                <td class="py-4 text-lg text-black">
                                     {{ $result->user->patientProfile->nama ?? 'Tidak ada nama' }}
                                 </td>
-                                <td class="py-4 text-lg">
+                                <td class="py-4 text-lg text-black">
                                     @if($result->user->patientProfile && $result->user->patientProfile->umur)
                                         {{ $result->user->patientProfile->umur }} tahun
                                     @else
                                         -
                                     @endif
                                 </td>
-                                <td class="py-4 text-lg">
+                                <td class="py-4 text-lg text-black">
                                     {{ \Carbon\Carbon::parse($result->created_at)->format('d/m/Y') }}
                                 </td>
                                 <td class="py-4 text-lg">
                                     @php
-                                        $predictionLower = strtolower($result->prediction);
-                                        $badgeColor = 'bg-green-500'; // normal
+                                        $predictionLower = strtolower($result->prediction ?? '');
+                                        $badgeStyle = 'background-color: #22c55e;'; // normal (green)
                                         if (str_contains($predictionLower, 'jinak')) {
-                                            $badgeColor = 'bg-yellow-500';
+                                            $badgeStyle = 'background-color: #eab308;'; // yellow
                                         } elseif (str_contains($predictionLower, 'ganas')) {
-                                            $badgeColor = 'bg-red-500';
+                                            $badgeStyle = 'background-color: #ef4444;'; // red
                                         }
                                     @endphp
-                                    <span class="px-3 py-1 rounded-full text-white font-semibold {{ $badgeColor }}">
-                                        {{ ucwords($result->prediction) }}
-                                    </span>
+                                    @if($result->prediction)
+                                        <span class="px-3 py-1 rounded-full text-white font-semibold" style="{{ $badgeStyle }}">
+                                            {{ ucwords($result->prediction) }}
+                                        </span>
+                                    @else
+                                        <span class="text-gray-500">-</span>
+                                    @endif
                                 </td>
                                 <td class="py-4 text-lg">
                                     <div class="flex gap-2">
                                         <a href="{{ route('report.export-patient', $result->id) }}"
-                                           class="inline-flex items-center px-3 py-2 bg-[#3e7b27] text-white rounded-lg hover:bg-opacity-90 transition text-sm">
+                                           class="inline-flex items-center px-3 py-2 text-white rounded-lg hover:opacity-80 transition text-sm"
+                                           style="background-color: #3e7b27;">
                                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                             </svg>
                                             Excel
                                         </a>
                                         <a href="{{ route('report.export-patient-pdf', $result->id) }}"
-                                           class="inline-flex items-center px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-opacity-90 transition text-sm">
+                                           class="inline-flex items-center px-3 py-2 text-white rounded-lg hover:opacity-80 transition text-sm"
+                                           style="background-color: #dc2626;">
                                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                                             </svg>
@@ -261,7 +265,6 @@
                             @if($end < $results->lastPage() - 1)
                                 <span class="px-2">...</span>
                             @endif
-                            <div>test</div>
                             <a href="{{ $results->appends(request()->query())->url($results->lastPage()) }}"
                                class="px-4 py-2 border rounded hover:bg-gray-100 transition">{{ $results->lastPage() }}</a>
                         @endif
