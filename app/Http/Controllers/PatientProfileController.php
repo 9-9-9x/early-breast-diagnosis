@@ -27,6 +27,7 @@ class PatientProfileController extends Controller
         Log::info('PatientProfileController@store called');
 
         $validatedData = $request->validate([
+            'nik' => 'required|string|max:16|unique:patient_profiles,nik',
             'nama' => 'required|string|max:255',
             'umur' => 'required|integer|min:0',
             'suku_bangsa' => 'required|string|max:255',
@@ -61,6 +62,7 @@ class PatientProfileController extends Controller
 
             $profileData = [
                 'user_id' => $user->id,
+                'nik' => $validatedData['nik'],
                 'nama' => $validatedData['nama'],
                 'umur' => $validatedData['umur'],
                 'suku_bangsa' => $validatedData['suku_bangsa'],

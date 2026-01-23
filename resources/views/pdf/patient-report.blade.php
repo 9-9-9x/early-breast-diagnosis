@@ -772,6 +772,14 @@
             <td></td>
         </tr>
         <tr>
+            <td class="label">NIK</td>
+            <td class="colon">:</td>
+            <td>{{ $patient->nik ?? '..................................' }}</td>
+            <td class="label"></td>
+            <td class="colon"></td>
+            <td></td>
+        </tr>
+        <tr>
             <td class="label">Nama</td>
             <td class="colon">:</td>
             <td>{{ $patient->nama ?? '..................................' }}</td>

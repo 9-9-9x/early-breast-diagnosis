@@ -49,6 +49,12 @@
                         {{-- Left Column --}}
                         <div class="space-y-8">
                             <div>
+                                <label for="nik" class="{{ $labelClasses }}">NIK {!! $requiredMark !!}</label>
+                                <input type="text" id="nik" name="nik" value="{{ old('nik') }}"
+                                    class="{{ $inputClasses }}" placeholder="Masukkan NIK (16 digit)">
+                            </div>
+
+                            <div>
                                 <label for="nama" class="{{ $labelClasses }}">Nama {!! $requiredMark !!}</label>
                                 <input type="text" id="nama" name="nama" value="{{ old('nama') }}"
                                     class="{{ $inputClasses }}" placeholder="Masukkan nama lengkap">

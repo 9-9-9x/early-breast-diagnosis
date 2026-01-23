@@ -20,18 +20,26 @@ class BreastExamController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $status = $request->input('status', 'all');
         $query = PatientProfile::query();
 
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('nama', 'like', '%' . $search . '%')
                     ->orWhere('umur', 'like', '%' . $search . '%')
-                    ->orWhere('nomor_telepon', 'like', '%' . $search . '%');
+                    ->orWhere('nomor_telepon', 'like', '%' . $search . '%')
+                    ->orWhere('nik', 'like', '%' . $search . '%');
             });
         }
 
+        if ($status === 'checked') {
+            $query->whereHas('user.breastExam');
+        } elseif ($status === 'unchecked') {
+            $query->whereDoesntHave('user.breastExam');
+        }
+
         $patients = $query->latest()->paginate(10)->appends($request->all());
-        return view('pages.deteksi-dini.index', compact('patients'));
+        return view('pages.deteksi-dini.index', compact('patients', 'status'));
     }
 
     /**

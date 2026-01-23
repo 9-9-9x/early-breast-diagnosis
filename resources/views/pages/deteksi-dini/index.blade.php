@@ -15,14 +15,24 @@
 
         <form action="{{ route('deteksi-dini.index') }}" method="GET">
             <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
-                <div class="flex items-center gap-x-2 text-lg">
-                    <span>Show</span>
-                    <select name="per_page" onchange="this.form.submit()" class="border border-black rounded-md py-2 px-3 bg-white focus:outline-none focus:ring-2 focus:ring-[#85a947]">
-                        <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
-                        <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
-                        <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
-                    </select>
-                    <span>entries</span>
+                <div class="flex items-center gap-x-4 text-lg flex-wrap">
+                    <div class="flex items-center gap-x-2">
+                        <span>Show</span>
+                        <select name="per_page" onchange="this.form.submit()" class="border border-black rounded-md py-2 px-3 bg-white focus:outline-none focus:ring-2 focus:ring-[#85a947]">
+                            <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                            <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                            <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                        </select>
+                        <span>entries</span>
+                    </div>
+                    <div class="flex items-center gap-x-2">
+                        <span>Status:</span>
+                        <select name="status" onchange="this.form.submit()" class="border border-black rounded-md py-2 px-3 bg-white focus:outline-none focus:ring-2 focus:ring-[#85a947]">
+                            <option value="all" {{ $status == 'all' ? 'selected' : '' }}>Semua</option>
+                            <option value="checked" {{ $status == 'checked' ? 'selected' : '' }}>Sudah Diperiksa</option>
+                            <option value="unchecked" {{ $status == 'unchecked' ? 'selected' : '' }}>Belum Diperiksa</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="relative">
                     <input type="search" name="search" placeholder="Search .." value="{{ request('search') }}" class="w-full sm:w-80 h-14 pl-5 pr-10 rounded-xl border border-black focus:outline-none focus:ring-2 focus:ring-[#85a947] text-lg">

@@ -11,15 +11,10 @@
 
 <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
     {{-- Card Header --}}
-    <div class="p-6 border-b flex justify-between items-center">
-        <h1 class="text-2xl md:text-3xl font-semibold text-center text-black w-full">
+    <div class="p-6 border-b">
+        <h1 class="text-2xl md:text-3xl font-semibold text-center text-black">
             Hasil Pemeriksaan Payudara
         </h1>
-        <button onclick="window.print()" class="p-2 rounded-full hover:bg-gray-100 transition">
-            <svg class="w-8 h-8 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-            </svg>
-        </button>
     </div>
 
     <form action="{{ route('deteksi-dini.update') }}" method="POST">

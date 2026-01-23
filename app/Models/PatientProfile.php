@@ -10,7 +10,26 @@ class PatientProfile extends Model
 {
     use HasFactory;
 
-    protected $guarded = ['id'];
+    protected $fillable = [
+        'user_id',
+        'nik',
+        'nama',
+        'umur',
+        'suku_bangsa',
+        'agama',
+        'bb',
+        'tb',
+        'jumlah_anak_kandung',
+        'nomor_telepon',
+        'alamat',
+        'rt',
+        'rw',
+        'desa_kelurahan',
+        'pendidikan_terakhir',
+        'pekerjaan_pasien',
+        'pekerjaan_suami',
+        'perkawinan_pasangan',
+    ];
 
     /**
      * @return BelongsTo<User,PatientProfile>
