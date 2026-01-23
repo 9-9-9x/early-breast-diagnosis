@@ -35,7 +35,17 @@ class PatientProfileController extends Controller
             'bb' => 'required|numeric|min:0',
             'tb' => 'required|numeric|min:0',
             'jumlah_anak' => 'required|integer|min:0',
-            'telepon' => 'required|string|max:20',
+            'telepon' => [
+                'required',
+                'string',
+                'max:20',
+                function ($attribute, $value, $fail) {
+                    $email = $value . '@example.com';
+                    if (User::where('email', $email)->exists()) {
+                        $fail('Nomor telepon sudah terdaftar. Gunakan nomor telepon lain.');
+                    }
+                },
+            ],
             'alamat' => 'required|string|max:500',
             'rt' => 'required|string|max:10',
             'rw' => 'required|string|max:10',
@@ -44,6 +54,8 @@ class PatientProfileController extends Controller
             'pekerjaan_pasien' => 'required|string|max:255',
             'pekerjaan_suami' => 'required|string|max:255',
             'status_perkawinan' => 'required|string|max:255',
+        ], [
+            'nik.unique' => 'NIK sudah terdaftar. Gunakan NIK lain atau hubungi admin.',
         ]);
 
         Log::info('Validation passed', $validatedData);
