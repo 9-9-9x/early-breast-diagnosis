@@ -88,11 +88,11 @@ class DiseaseReportExport implements WithEvents
     {
         $query = BreastResult::with('user.patientProfile')
             ->select(
-                DB::raw('CASE 
-                    WHEN patient_profiles.umur < 30 THEN "< 30"
-                    WHEN patient_profiles.umur >= 30 AND patient_profiles.umur < 40 THEN "30-39"
-                    WHEN patient_profiles.umur >= 40 AND patient_profiles.umur < 50 THEN "40-49"
-                    WHEN patient_profiles.umur >= 50 AND patient_profiles.umur < 60 THEN "50-59"
+                DB::raw('CASE
+                    WHEN TIMESTAMPDIFF(YEAR, patient_profiles.tanggal_lahir, CURDATE()) < 30 THEN "< 30"
+                    WHEN TIMESTAMPDIFF(YEAR, patient_profiles.tanggal_lahir, CURDATE()) >= 30 AND TIMESTAMPDIFF(YEAR, patient_profiles.tanggal_lahir, CURDATE()) < 40 THEN "30-39"
+                    WHEN TIMESTAMPDIFF(YEAR, patient_profiles.tanggal_lahir, CURDATE()) >= 40 AND TIMESTAMPDIFF(YEAR, patient_profiles.tanggal_lahir, CURDATE()) < 50 THEN "40-49"
+                    WHEN TIMESTAMPDIFF(YEAR, patient_profiles.tanggal_lahir, CURDATE()) >= 50 AND TIMESTAMPDIFF(YEAR, patient_profiles.tanggal_lahir, CURDATE()) < 60 THEN "50-59"
                     ELSE ">= 60"
                 END as age_group'),
                 'prediction',
@@ -202,8 +202,8 @@ class DiseaseReportExport implements WithEvents
             $sheet->setCellValue('G11', $tanggalAwal->format('F')); // Bulan
             $sheet->setCellValue('G13', $tanggalAwal->format('Y')); // Tahun
         } else {
-            $sheet->setCellValue('G11', date('F')); // Bulan sekarang
-            $sheet->setCellValue('G13', date('Y')); // Tahun sekarang
+            $sheet->setCellValue('G11', \Carbon\Carbon::now()->format('F')); // Bulan sekarang
+            $sheet->setCellValue('G13', \Carbon\Carbon::now()->format('Y')); // Tahun sekarang
         }
     }
 }

@@ -26,24 +26,24 @@
 
                 @if ($resultType == 'normal')
                     {{-- Tampilan untuk Hasil NORMAL --}}
-                    <div class="w-full h-64 rounded-2xl bg-[#3e7b27] flex items-center justify-center">
+                    <div class="w-full h-64 rounded-2xl bg-green-600 flex items-center justify-center">
                         <p class="text-8xl font-semibold text-center text-white">Normal</p>
                     </div>
                     <div class="mt-12 space-y-6">
                         <h3 class="text-3xl font-semibold text-black">Rekomendasi:</h3>
-                        <x-recommendation-item 
+                        <x-recommendation-item
                             value="sadari_bulanan"
                             :checked="$breastResult && $breastResult->isRecommendationChecked('sadari_bulanan')">
                             Anjurkan SADARI setiap bulan
                         </x-recommendation-item>
-                        
-                        <x-recommendation-item 
+
+                        <x-recommendation-item
                             value="periksa_tahunan"
                             :checked="$breastResult && $breastResult->isRecommendationChecked('periksa_tahunan')">
                             Pemeriksaan Payudara setahun sekali
                         </x-recommendation-item>
-                        
-                        <x-recommendation-item 
+
+                        <x-recommendation-item
                             value="mammografi_40_plus"
                             :checked="$breastResult && $breastResult->isRecommendationChecked('mammografi_40_plus')">
                             Pemeriksaan mammografi pada usia > 40 tahun
@@ -52,13 +52,13 @@
 
                 @elseif ($resultType == 'jinak')
                     {{-- Tampilan untuk Hasil JINAK --}}
-                    <div class="w-full h-64 rounded-2xl bg-[#3e7b27] flex flex-col items-center justify-center text-center">
-                        <p class="text-8xl font-semibold italic text-red-500 -mb-4">Suspect</p>
-                        <p class="text-6xl font-semibold text-red-500">Kelainan Payudara Jinak</p>
+                    <div class="w-full h-64 rounded-2xl bg-yellow-500 flex flex-col items-center justify-center text-center">
+                        <p class="text-8xl font-semibold italic text-white -mb-4">Suspect</p>
+                        <p class="text-6xl font-semibold text-white">Kelainan Payudara Jinak</p>
                     </div>
                     <div class="mt-12 space-y-6">
                         <h3 class="text-3xl font-semibold text-black">Rekomendasi:</h3>
-                        <x-recommendation-item 
+                        <x-recommendation-item
                             value="rujuk_lanjutan"
                             :checked="$breastResult && $breastResult->isRecommendationChecked('rujuk_lanjutan')">
                             Rujuk untuk pemeriksaan lanjutan
@@ -67,13 +67,13 @@
 
                 @else {{-- Anggap saja ini untuk 'ganas' --}}
                     {{-- Tampilan untuk Hasil GANAS --}}
-                    <div class="w-full h-64 rounded-2xl bg-[#3e7b27] flex flex-col items-center justify-center text-center">
-                        <p class="text-8xl font-semibold italic text-red-500 -mb-4">Suspect</p>
-                        <p class="text-6xl font-semibold text-red-500">Kelainan Payudara Ganas</p>
+                    <div class="w-full h-64 rounded-2xl bg-red-600 flex flex-col items-center justify-center text-center">
+                        <p class="text-8xl font-semibold italic text-white -mb-4">Suspect</p>
+                        <p class="text-6xl font-semibold text-white">Kelainan Payudara Ganas</p>
                     </div>
                     <div class="mt-12 space-y-6">
                         <h3 class="text-3xl font-semibold text-black">Rekomendasi:</h3>
-                        <x-recommendation-item 
+                        <x-recommendation-item
                             value="rujuk_lanjutan"
                             :checked="$breastResult && $breastResult->isRecommendationChecked('rujuk_lanjutan')">
                             Rujuk untuk pemeriksaan lanjutan
@@ -86,11 +86,11 @@
 
         {{-- Action Buttons --}}
         <div class="p-6 bg-gray-50 border-t flex justify-end items-center gap-4">
-            <a href="{{ route('deteksi-dini.index') }}" 
+            <a href="{{ route('deteksi-dini.index') }}"
                class="w-full sm:w-auto h-16 px-10 rounded-xl border border-[#3e7b27] text-black font-semibold text-2xl hover:bg-gray-100 transition shadow-sm flex items-center justify-center">
                 BATAL
             </a>
-            <button type="submit" 
+            <button type="submit"
                     class="w-full sm:w-auto h-16 px-10 rounded-xl bg-[#3e7b27] text-white font-semibold text-2xl hover:bg-opacity-90 transition shadow-sm">
                 SIMPAN
             </button>

@@ -203,7 +203,7 @@
         <tr>
             <td class="label">Umur</td>
             <td class="colon">:</td>
-            <td>{{ $patient->umur ?? '....' }} Tahun</td>
+            <td>{{ number_format($patient->umur, 0) ?? '....' }} Tahun</td>
             <td class="label">Pekerjaan</td>
             <td class="colon">:</td>
             <td>Pasien: {{ $patient->pekerjaan_pasien ?? '....................' }}, Suami: {{ $patient->pekerjaan_suami ?? '....................' }}</td>
@@ -790,7 +790,7 @@
         <tr>
             <td class="label">Umur</td>
             <td class="colon">:</td>
-            <td>{{ $patient->umur ?? '....' }} Tahun</td>
+            <td>{{ number_format($patient->umur, 0) ?? '....' }} Tahun</td>
             <td class="label">Pekerjaan</td>
             <td class="colon">:</td>
             <td>Pasien: {{ $patient->pekerjaan_pasien ?? '....................' }}, Suami: {{ $patient->pekerjaan_suami ?? '....................' }}</td>

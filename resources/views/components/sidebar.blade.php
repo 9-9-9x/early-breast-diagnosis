@@ -61,20 +61,8 @@
                 </div>
             </div>
 
-            <a href="{{ route('pengaturan.edit') }}" class="{{ $navLinkClasses }} {{ request()->routeIs('pengaturan*') ? $activeLinkClasses : $inactiveLinkClasses }}">
-                <span>Pengaturan</span>
-            </a>
         </nav>
 
-        <div class="px-8 pb-8 flex-shrink-0">
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="flex items-center gap-x-4 text-2xl font-semibold text-red-600 hover:text-red-800 transition-colors">
-                    <span>Logout</span>
-                    <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 17L21 12M21 12L16 7M21 12L7 12M12 17L10.75 17C7.40279 17 4.75 14.3472 4.75 11C4.75 7.65279 7.40279 5 10.75 5L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </button>
-            </form>
-        </div>
     </aside>
 
     <div x-show="sidebarOpen" @click="sidebarOpen = false" x-transition.opacity class="fixed inset-0 bg-black/30 z-40 lg:hidden"></div>

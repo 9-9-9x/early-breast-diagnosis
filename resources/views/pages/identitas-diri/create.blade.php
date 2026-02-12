@@ -51,7 +51,9 @@
                             <div>
                                 <label for="nik" class="{{ $labelClasses }}">NIK {!! $requiredMark !!}</label>
                                 <input type="text" id="nik" name="nik" value="{{ old('nik') }}"
-                                    class="{{ $inputClasses }}" placeholder="Masukkan NIK (16 digit)">
+                                    class="{{ $inputClasses }}" placeholder="Masukkan NIK (16 digit)"
+                                    minlength="16" maxlength="16" pattern="[0-9]{16}" inputmode="numeric"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                             </div>
 
                             <div>
@@ -61,9 +63,9 @@
                             </div>
 
                             <div>
-                                <label for="umur" class="{{ $labelClasses }}">Umur {!! $requiredMark !!}</label>
-                                <input type="number" id="umur" name="umur" value="{{ old('umur') }}"
-                                    class="{{ $inputClasses }}" placeholder="Contoh: 25">
+                                <label for="tanggal_lahir" class="{{ $labelClasses }}">Tanggal Lahir {!! $requiredMark !!}</label>
+                                <input type="date" id="tanggal_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}"
+                                    class="{{ $inputClasses }}" max="{{ date('Y-m-d') }}">
                             </div>
 
                             <div>
@@ -116,13 +118,13 @@
                                     <label for="bb" class="{{ $labelClasses }}">BB (kg)
                                         {!! $requiredMark !!}</label>
                                     <input type="number" id="bb" name="bb" value="{{ old('bb') }}"
-                                        class="{{ $inputClasses }}" placeholder="Contoh: 55">
+                                        class="{{ $inputClasses }}" placeholder="Contoh: 55" min="0" max="100">
                                 </div>
                                 <div>
                                     <label for="tb" class="{{ $labelClasses }}">TB (cm)
                                         {!! $requiredMark !!}</label>
                                     <input type="number" id="tb" name="tb" value="{{ old('tb') }}"
-                                        class="{{ $inputClasses }}" placeholder="Contoh: 160">
+                                        class="{{ $inputClasses }}" placeholder="Contoh: 160" min="0" max="200">
                                 </div>
                             </div>
 
@@ -174,6 +176,7 @@
                                         <option value="sumberpinang" @selected(old('desa') == 'sumberpinang')>Sumberpinang</option>
                                         <option value="jatian" @selected(old('desa') == 'jatian')>Jatian</option>
                                         <option value="bedadung" @selected(old('desa') == 'bedadung')>Bedadung</option>
+                                        <option value="kertosari" @selected(old('desa') == 'kertosari')>Kertosari</option>
                                     </select>
                                     <div
                                         class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-700">
@@ -193,6 +196,7 @@
                                     <select id="pendidikan" name="pendidikan"
                                         class="{{ $inputClasses }} appearance-none">
                                         <option value="" disabled selected>Pilih pendidikan</option>
+                                        <option value="Tidak Sekolah" @selected(old('pendidikan') == 'Tidak Sekolah')>Tidak Sekolah</option>
                                         <option value="SD" @selected(old('pendidikan') == 'SD')>SD</option>
                                         <option value="SMP" @selected(old('pendidikan') == 'SMP')>SMP</option>
                                         <option value="SMA/SMK" @selected(old('pendidikan') == 'SMA/SMK')>SMA/SMK</option>
@@ -272,7 +276,7 @@
                                         <option value="" disabled selected>Pilih status perkawinan</option>
                                         <option value="Menikah" @selected(old('status_perkawinan') == 'Menikah')>Menikah</option>
                                         <option value="Belum Menikah" @selected(old('status_perkawinan') == 'Belum Menikah')>Belum Menikah</option>
-                                        <option value="Janda/Duda" @selected(old('status_perkawinan') == 'Janda/Duda')>Janda/Duda</option>
+                                        <option value="Janda/Duda" @selected(old('status_perkawinan') == 'Janda/Duda')>Janda</option>
                                     </select>
                                     <div
                                         class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-700">

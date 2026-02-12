@@ -73,6 +73,7 @@
                                     <option value="sumberpinang" class="text-black" {{ request('wilayah') == 'sumberpinang' ? 'selected' : '' }}>Sumberpinang</option>
                                     <option value="jatian" class="text-black" {{ request('wilayah') == 'jatian' ? 'selected' : '' }}>Jatian</option>
                                     <option value="bedadung" class="text-black" {{ request('wilayah') == 'bedadung' ? 'selected' : '' }}>Bedadung</option>
+                                    <option value="kertosari" class="text-black" {{ request('wilayah') == 'kertosari' ? 'selected' : '' }}>Kertosari</option>
                                 </select>
                                 <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
                                     <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor"
@@ -166,7 +167,7 @@
                                 </td>
                                 <td class="py-4 text-lg text-black">
                                     @if($result->user->patientProfile && $result->user->patientProfile->umur)
-                                        {{ $result->user->patientProfile->umur }} tahun
+                                        {{ number_format($result->user->patientProfile->umur, 0) }} tahun
                                     @else
                                         -
                                     @endif
@@ -193,22 +194,13 @@
                                     @endif
                                 </td>
                                 <td class="py-4 text-lg">
-                                    <div style="display: flex; gap: 8px;">
-                                        <a href="{{ route('report.export-patient', $result->id) }}"
-                                           style="display: inline-flex; align-items: center; padding: 8px 12px; background-color: #3e7b27; color: white; border-radius: 8px; font-size: 14px; text-decoration: none;">
-                                            <svg style="width: 16px; height: 16px; margin-right: 4px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                            </svg>
-                                            Excel
-                                        </a>
-                                        <a href="{{ route('report.export-patient-pdf', $result->id) }}"
-                                           style="display: inline-flex; align-items: center; padding: 8px 12px; background-color: #dc2626; color: white; border-radius: 8px; font-size: 14px; text-decoration: none;">
-                                            <svg style="width: 16px; height: 16px; margin-right: 4px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                                            </svg>
-                                            PDF
-                                        </a>
-                                    </div>
+                                    <a href="{{ route('report.export-patient-pdf', $result->id) }}"
+                                       style="display: inline-flex; align-items: center; padding: 8px 12px; background-color: #dc2626; color: white; border-radius: 8px; font-size: 14px; text-decoration: none;">
+                                        <svg style="width: 16px; height: 16px; margin-right: 4px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                        </svg>
+                                        Cetak PDF
+                                    </a>
                                 </td>
                             </tr>
                         @empty

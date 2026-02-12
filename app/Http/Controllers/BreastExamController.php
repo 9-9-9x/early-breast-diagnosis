@@ -20,26 +20,29 @@ class BreastExamController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $status = $request->input('status', 'all');
-        $query = PatientProfile::query();
+
+        // Query for unchecked patients (Belum Diperiksa)
+        $uncheckedQuery = PatientProfile::query()->whereDoesntHave('user.breastExam');
+        // Query for checked patients (Sudah Diperiksa)
+        $checkedQuery = PatientProfile::query()->whereHas('user.breastExam');
 
         if ($search) {
-            $query->where(function ($q) use ($search) {
+            $uncheckedQuery->where(function ($q) use ($search) {
                 $q->where('nama', 'like', '%' . $search . '%')
-                    ->orWhere('umur', 'like', '%' . $search . '%')
+                    ->orWhere('nomor_telepon', 'like', '%' . $search . '%')
+                    ->orWhere('nik', 'like', '%' . $search . '%');
+            });
+            $checkedQuery->where(function ($q) use ($search) {
+                $q->where('nama', 'like', '%' . $search . '%')
                     ->orWhere('nomor_telepon', 'like', '%' . $search . '%')
                     ->orWhere('nik', 'like', '%' . $search . '%');
             });
         }
 
-        if ($status === 'checked') {
-            $query->whereHas('user.breastExam');
-        } elseif ($status === 'unchecked') {
-            $query->whereDoesntHave('user.breastExam');
-        }
+        $uncheckedPatients = $uncheckedQuery->latest()->paginate(10, ['*'], 'unchecked_page')->appends($request->all());
+        $checkedPatients = $checkedQuery->latest()->paginate(10, ['*'], 'checked_page')->appends($request->all());
 
-        $patients = $query->latest()->paginate(10)->appends($request->all());
-        return view('pages.deteksi-dini.index', compact('patients', 'status'));
+        return view('pages.deteksi-dini.index', compact('uncheckedPatients', 'checkedPatients'));
     }
 
     /**
@@ -48,7 +51,11 @@ class BreastExamController extends Controller
     public function create(Request $request)
     {
         $user_id = $request->input('user_id');
-        return view('pages.deteksi-dini.create', compact('user_id'));
+        $patient = null;
+        if ($user_id) {
+            $patient = PatientProfile::where('user_id', $user_id)->first();
+        }
+        return view('pages.deteksi-dini.create', compact('user_id', 'patient'));
     }
 
     /**
@@ -76,7 +83,7 @@ class BreastExamController extends Controller
             'cairan_abnormal' => 'nullable|boolean',
             // Benjolan
             'benjolan_radio' => 'required|string|max:10|in:ya,tidak',
-            'benjolan_ukuran' => 'nullable|string|max:255',
+            'benjolan_ukuran' => 'nullable|string|max:50',
             // Bentuk Kelainan
             'kelainan' => 'nullable|array',
             'kelainan.*' => 'string|max:255|in:kenyal,keras,bergerak,tidak_bergerak',
@@ -158,6 +165,7 @@ class BreastExamController extends Controller
                 // 2. Hit API prediction
                 Log::info('Sending data to ML API', ['ml_data' => $mlData]);
 
+                /** @var \Illuminate\Http\Client\Response $response */
                 $response = Http::timeout(30)->post('http://129.212.208.190:8005/predict', $mlData);
 
                 Log::info('Response from ML API', [

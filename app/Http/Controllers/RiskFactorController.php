@@ -33,18 +33,24 @@ class RiskFactorController extends Controller
         // Calculate BMI and obesity status from patient profile
         $isObese = false;
         $bmi = null;
+        $patientAge = null;
 
-        if ($user->patientProfile && $user->patientProfile->bb && $user->patientProfile->tb) {
-            $weightKg = $user->patientProfile->bb;
-            $heightM = $user->patientProfile->tb / 100; // Convert cm to meters
+        if ($user->patientProfile) {
+            if ($user->patientProfile->bb && $user->patientProfile->tb) {
+                $weightKg = $user->patientProfile->bb;
+                $heightM = $user->patientProfile->tb / 100; // Convert cm to meters
 
-            if ($heightM > 0) {
-                $bmi = $weightKg / ($heightM * $heightM);
-                $isObese = $bmi > 27; // Indonesian obesity threshold
+                if ($heightM > 0) {
+                    $bmi = $weightKg / ($heightM * $heightM);
+                    $isObese = $bmi > 27; // Indonesian obesity threshold
+                }
             }
+
+            // Calculate age from tanggal_lahir
+            $patientAge = $user->patientProfile->umur;
         }
 
-        return view('pages.faktor-resiko.create', compact('user', 'isObese', 'bmi'));
+        return view('pages.faktor-resiko.create', compact('user', 'isObese', 'bmi', 'patientAge'));
     }
 
     /**
@@ -153,6 +159,7 @@ class RiskFactorController extends Controller
                 'F17' => (int) $riskFactor->kb_hormonal_suntik_lebih_5_tahun,
             ];
 
+            /** @var \Illuminate\Http\Client\Response $response */
             $response = Http::timeout(30)->post('http://129.212.208.190:8005/predict', $features);
 
             if ($response->successful()) {
@@ -230,6 +237,7 @@ class RiskFactorController extends Controller
         ];
 
         try {
+            /** @var \Illuminate\Http\Client\Response $response */
             $response = Http::timeout(30)->post('http://129.212.208.190:8005/predict', $features);
 
             Log::info('Response dari API:', $response->json());

@@ -15,17 +15,24 @@
         $radioPeerCheckedClasses = 'peer-checked:bg-[#3e7b27] peer-checked:border-[#3e7b27]';
         $requiredMark = '<span class="text-red-600">*</span>';
 
+        // Patient age for auto-fill logic
+        $age = isset($patientAge) ? $patientAge : null;
+        $autoFillKehamilanTidak = ($age !== null && $age < 35);
+        $autoFillMenopauseTidak = ($age !== null && $age < 50);
+
         // Questions for Step 1
         $questions_step1 = [
             ['name' => 'menstruasi_dini', 'label' => 'Menstruasi < 12 Tahun'],
             ['name' => 'merokok', 'label' => 'Merokok'],
             ['name' => 'terpapar_asap_rokok', 'label' => 'Terpapar Asap Rokok (> 1 jam/hari)'],
             ['name' => 'kurang_buah_sayur', 'label' => 'Konsumsi Buah dan Sayur (< 5 porsi/hari)'],
-            ['name' => 'konsumsi_lemak', 'label' => 'Konsumsi Makanan Berlemak'],
+            ['name' => 'konsumsi_lemak', 'label' => 'Konsumsi Makanan Berlemak', 'note' => 'Contoh : mie instan, sosis, nugget, keju,
+snack kemasan'],
             ['name' => 'konsumsi_pengawet', 'label' => 'Konsumsi Makanan Berpengawet'],
-            ['name' => 'kurang_aktivitas_fisik', 'label' => 'Kurang Aktivitas Fisik (< 30 menit/hari)'],
-            ['name' => 'riwayat_keluarga', 'label' => 'Riwayat Keluarga Kanker Payudara'],
-            ['name' => 'kehamilan_pertama_tua', 'label' => 'Kehamilan Pertama > 35 Tahun'],
+            ['name' => 'kurang_aktivitas_fisik', 'label' => 'Kurang Aktivitas Fisik (< 30 menit/hari)', 'note' => 'Aktifitas fisik berupa olahraga, bukan melakukan
+pekerjaan rumah atau bekerja'],
+            ['name' => 'riwayat_keluarga', 'label' => 'Riwayat Keluarga Kanker Payudara', 'note' => 'Keluarga kandung'],
+            ['name' => 'kehamilan_pertama_tua', 'label' => 'Kehamilan Pertama > 35 Tahun', 'auto_no_if_young' => true],
         ];
 
         // Questions for Step 2
@@ -33,8 +40,9 @@
             ['name' => 'pernah_menyusui', 'label' => 'Pernah Menyusui'],
             ['name' => 'pernah_melahirkan', 'label' => 'Pernah Melahirkan'],
             ['name' => 'melahirkan_lebih_4_kali', 'label' => 'Melahirkan ≥ 4 kali'],
-            ['name' => 'riwayat_tumor_jinak', 'label' => 'Riwayat Tumor Jinak Payudara'],
-            ['name' => 'menopause_lebih_50', 'label' => 'Menopause > 50 Tahun'],
+            ['name' => 'riwayat_tumor_jinak', 'label' => 'Riwayat Tumor Jinak Payudara', 'note' => 'Pernah terkena tumor jinak payudara
+lalu sembuh'],
+            ['name' => 'menopause_lebih_50', 'label' => 'Menopause > 50 Tahun', 'auto_no_if_young_50' => true],
             ['name' => 'obesitas', 'label' => 'Obesitas (IMT >27 kg/m²)', 'auto' => true],
         ];
 
@@ -88,28 +96,60 @@
                         </div>
                         <div class="space-y-4">
                             @foreach ($questions_step1 as $question)
+                                @php
+                                    $isAutoNo = isset($question['auto_no_if_young']) && $question['auto_no_if_young'] && $autoFillKehamilanTidak;
+                                    $autoValue = $isAutoNo ? '0' : null;
+                                @endphp
                                 <div
                                     class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 py-4 border-b last:border-b-0">
-                                    <p class="text-xl md:text-2xl font-medium text-black">
-                                        {{ $question['label'] }} {!! $requiredMark !!}
-                                    </p>
+                                    <div>
+                                        <p class="text-xl md:text-2xl font-medium text-black">
+                                            {{ $question['label'] }} {!! $requiredMark !!}
+                                        </p>
+                                        @if (isset($question['note']))
+                                            <p class="text-sm text-gray-500 mt-1">* {{ $question['note'] }}</p>
+                                        @endif
+                                        @if ($isAutoNo)
+                                            <p class="text-sm text-blue-600 mt-1">* Terisi otomatis "Tidak" karena usia < 35 tahun</p>
+                                        @endif
+                                    </div>
                                     <div class="flex items-center gap-x-8 w-full md:w-auto">
-                                        <div class="w-1/2 md:w-14">
-                                            <input type="radio" name="{{ $question['name'] }}"
-                                                id="{{ $question['name'] }}_yes" value="1" class="hidden peer"
-                                                @checked(old($question['name']) == '1')>
-                                            <label for="{{ $question['name'] }}_yes"
-                                                class="{{ $radioLabelClasses }} {{ $radioPeerCheckedClasses }}"><span
-                                                    class="hidden peer-checked:block text-3xl">✅</span></label>
-                                        </div>
-                                        <div class="w-1/2 md:w-14">
-                                            <input type="radio" name="{{ $question['name'] }}"
-                                                id="{{ $question['name'] }}_no" value="0" class="hidden peer"
-                                                @checked(old($question['name']) == '0')>
-                                            <label for="{{ $question['name'] }}_no"
-                                                class="{{ $radioLabelClasses }} {{ $radioPeerCheckedClasses }}"><span
-                                                    class="hidden peer-checked:block text-3xl">✅</span></label>
-                                        </div>
+                                        @if ($isAutoNo)
+                                            <div class="w-1/2 md:w-14">
+                                                <input type="radio" name="{{ $question['name'] }}"
+                                                    id="{{ $question['name'] }}_yes" value="1" class="hidden peer"
+                                                    disabled>
+                                                <label for="{{ $question['name'] }}_yes"
+                                                    class="{{ $radioLabelClasses }} {{ $radioPeerCheckedClasses }} cursor-not-allowed pointer-events-none"><span
+                                                        class="hidden peer-checked:block text-3xl">✅</span></label>
+                                            </div>
+                                            <div class="w-1/2 md:w-14">
+                                                <input type="radio" name="{{ $question['name'] }}"
+                                                    id="{{ $question['name'] }}_no" value="0" class="hidden peer"
+                                                    disabled checked>
+                                                <label for="{{ $question['name'] }}_no"
+                                                    class="{{ $radioLabelClasses }} {{ $radioPeerCheckedClasses }} cursor-not-allowed pointer-events-none"><span
+                                                        class="hidden peer-checked:block text-3xl">✅</span></label>
+                                            </div>
+                                            <input type="hidden" name="{{ $question['name'] }}" value="0">
+                                        @else
+                                            <div class="w-1/2 md:w-14">
+                                                <input type="radio" name="{{ $question['name'] }}"
+                                                    id="{{ $question['name'] }}_yes" value="1" class="hidden peer"
+                                                    @checked(old($question['name']) == '1')>
+                                                <label for="{{ $question['name'] }}_yes"
+                                                    class="{{ $radioLabelClasses }} {{ $radioPeerCheckedClasses }}"><span
+                                                        class="hidden peer-checked:block text-3xl">✅</span></label>
+                                            </div>
+                                            <div class="w-1/2 md:w-14">
+                                                <input type="radio" name="{{ $question['name'] }}"
+                                                    id="{{ $question['name'] }}_no" value="0" class="hidden peer"
+                                                    @checked(old($question['name']) == '0')>
+                                                <label for="{{ $question['name'] }}_no"
+                                                    class="{{ $radioLabelClasses }} {{ $radioPeerCheckedClasses }}"><span
+                                                        class="hidden peer-checked:block text-3xl">✅</span></label>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             @endforeach
@@ -148,10 +188,12 @@
 
                             <div class="border-b"> <!-- Seksi KB Hormonal -->
                                 <div
-                                    class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 py-4">
+                                    class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 py-2">
                                     <p class="text-xl md:text-2xl font-medium text-black">KB Hormonal
                                         {!! $requiredMark !!}</p> <!-- Judul saja -->
                                 </div>
+
+                                <p class="text-sm text-gray-500">* Penggunaan KB Hormonal secara terus menerus, tanpa ada jeda</p>
 
                                 <!-- DIV INI DITAMPILKAN SECARA KONDISIONAL BERDASARKAN kb_hormonal -->
                                 <!-- KARENA kb_hormonal BUKAN SWITCHER, KITA HAPUS x-show -->
@@ -201,19 +243,29 @@
                             </div>
 
                             @foreach (array_slice($questions_step2, 3) as $question)
+                                @php
+                                    $isAutoMenopause = isset($question['auto_no_if_young_50']) && $question['auto_no_if_young_50'] && $autoFillMenopauseTidak;
+                                @endphp
                                 <div
                                     class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 py-4 border-b last:border-b-0">
                                     <div>
                                         <p class="text-xl md:text-2xl font-medium text-black">
                                             {{ $question['label'] }} {!! $requiredMark !!}
-                                            @if (isset($question['auto']) && $question['auto'] && $bmiDisplay)
-                                                <span class="text-sm text-gray-500 ml-2">(IMT: {{ $bmiDisplay }}
-                                                    kg/m²)</span>
-                                            @endif
                                         </p>
+                                        @if (isset($question['auto']) && $question['auto'] && $bmiDisplay)
+                                            @php
+                                                $bmiBgStyle = $isObese ? 'background-color: #dc2626;' : 'background-color: #3e7b27;';
+                                            @endphp
+                                            <p class="text-xl md:text-2xl font-bold text-white px-4 py-2 rounded-lg mt-2" style="{{ $bmiBgStyle }}">IMT Anda saat ini: {{ $bmiDisplay }} kg/m²</p>
+                                        @endif
+                                        @if (isset($question['note']))
+                                            <p class="text-sm text-gray-500 mt-1">* {{ $question['note'] }}</p>
+                                        @endif
                                         @if (isset($question['auto']) && $question['auto'])
-                                            <p class="text-sm text-gray-500 mt-1">* Terisi otomatis berdasarkan BB dan TB
-                                            </p>
+                                            <p class="text-sm text-gray-500 mt-1">* Terisi otomatis berdasarkan BB dan TB</p>
+                                        @endif
+                                        @if ($isAutoMenopause)
+                                            <p class="text-sm text-blue-600 mt-1">* Terisi otomatis "Tidak" karena usia < 50 tahun</p>
                                         @endif
                                     </div>
                                     <div class="flex items-center gap-x-8 w-full md:w-auto">
@@ -233,6 +285,21 @@
                                                         class="hidden peer-checked:block text-3xl">✅</span></label></div>
                                             {{-- Hidden input to ensure value is submitted --}}
                                             <input type="hidden" name="{{ $question['name'] }}" value="{{ old($question['name'], $obesitasValue) }}">
+                                        @elseif ($isAutoMenopause)
+                                            {{-- Auto-fill "Tidak" for menopause if age < 50 --}}
+                                            <div class="w-1/2 md:w-14"><input type="radio"
+                                                    name="{{ $question['name'] }}" id="{{ $question['name'] }}_yes"
+                                                    value="1" class="hidden peer" disabled><label
+                                                    for="{{ $question['name'] }}_yes"
+                                                    class="{{ $radioLabelClasses }} {{ $radioPeerCheckedClasses }} cursor-not-allowed pointer-events-none"><span
+                                                        class="hidden peer-checked:block text-3xl">✅</span></label></div>
+                                            <div class="w-1/2 md:w-14"><input type="radio"
+                                                    name="{{ $question['name'] }}" id="{{ $question['name'] }}_no"
+                                                    value="0" class="hidden peer" disabled checked><label
+                                                    for="{{ $question['name'] }}_no"
+                                                    class="{{ $radioLabelClasses }} {{ $radioPeerCheckedClasses }} cursor-not-allowed pointer-events-none"><span
+                                                        class="hidden peer-checked:block text-3xl">✅</span></label></div>
+                                            <input type="hidden" name="{{ $question['name'] }}" value="0">
                                         @else
                                             <div class="w-1/2 md:w-14"><input type="radio"
                                                     name="{{ $question['name'] }}" id="{{ $question['name'] }}_yes"

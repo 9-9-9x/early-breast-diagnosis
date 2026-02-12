@@ -22,8 +22,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/faktor-risiko', [RiskFactorController::class, 'store'])->name('faktor-risiko.store');
     Route::get('/faktor-risiko/show', [RiskFactorController::class, 'show'])->name('faktor-risiko.show');
 
-    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-    Route::post('/register', [RegisterController::class, 'register']);
+    // Register routes removed per revision
 });
 
 Route::middleware('auth')->group(function () {
@@ -42,6 +41,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/export-pasien/{id}', [ReportController::class, 'exportPatient'])->name('report.export-patient');
     Route::get('/laporan/export-pasien-pdf/{id}', [ReportController::class, 'exportPatientPdf'])->name('report.export-patient-pdf');
     Route::get('/laporan/export-penyakit', [ReportController::class, 'exportDisease'])->name('report.export-disease');
+    Route::get('/laporan/export-penyakit-pdf', [ReportController::class, 'exportDiseasePdf'])->name('report.export-disease-pdf');
 
     Route::get('/pengaturan', [SettingsController::class, 'edit'])->name('pengaturan.edit');
     Route::post('/pengaturan', [SettingsController::class, 'update'])->name('pengaturan.update');

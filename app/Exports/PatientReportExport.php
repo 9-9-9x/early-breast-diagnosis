@@ -135,6 +135,7 @@ class PatientReportExport implements WithEvents
 
         // Data tambahan kolom kanan
         if ($patient) {
+            $sheet->setCellValue('D10', 'NIK : ' . ($patient->nik ?? '-'));
             $sheet->setCellValue('F11', 'Pasangan ' . ($patient->perkawinan_pasangan ?? '-') . ' kali');
             $sheet->setCellValue('D12', 'Pekerjaan pasien: ' . ($patient->pekerjaan_pasien ?? '-') . ', pekerjaan suami: ' . ($patient->pekerjaan_suami ?? '-'));
             $sheet->setCellValue('D13', 'Pendidikan terakhir : ' . ($patient->pendidikan_terakhir ?? '-'));

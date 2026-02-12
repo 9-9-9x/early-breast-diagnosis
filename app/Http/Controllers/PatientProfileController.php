@@ -27,13 +27,13 @@ class PatientProfileController extends Controller
         Log::info('PatientProfileController@store called');
 
         $validatedData = $request->validate([
-            'nik' => 'required|string|max:16|unique:patient_profiles,nik',
-            'nama' => 'required|string|max:255',
-            'umur' => 'required|integer|min:0',
-            'suku_bangsa' => 'required|string|max:255',
-            'agama' => 'required|string|max:255',
-            'bb' => 'required|numeric|min:0',
-            'tb' => 'required|numeric|min:0',
+            'nik' => 'required|string|size:16|unique:patient_profiles,nik',
+            'nama' => 'required|string|max:100',
+            'tanggal_lahir' => 'required|date|before_or_equal:today',
+            'suku_bangsa' => 'required|string|max:50',
+            'agama' => 'required|string|max:20',
+            'bb' => 'required|numeric|min:0|max:100',
+            'tb' => 'required|numeric|min:0|max:200',
             'jumlah_anak' => 'required|integer|min:0',
             'telepon' => [
                 'required',
@@ -47,22 +47,25 @@ class PatientProfileController extends Controller
                 },
             ],
             'alamat' => 'required|string|max:500',
-            'rt' => 'required|string|max:10',
-            'rw' => 'required|string|max:10',
-            'desa' => 'required|string|max:255',
-            'pendidikan' => 'required|string|max:255',
-            'pekerjaan_pasien' => 'required|string|max:255',
-            'pekerjaan_suami' => 'required|string|max:255',
-            'status_perkawinan' => 'required|string|max:255',
+            'rt' => 'required|string|max:5',
+            'rw' => 'required|string|max:5',
+            'desa' => 'required|string|max:50',
+            'pendidikan' => 'required|string|max:50',
+            'pekerjaan_pasien' => 'required|string|max:100',
+            'pekerjaan_suami' => 'required|string|max:100',
+            'status_perkawinan' => 'required|string|max:30',
         ], [
             'nik.unique' => 'NIK sudah terdaftar. Gunakan NIK lain atau hubungi admin.',
         ]);
 
         Log::info('Validation passed', $validatedData);
 
+        /** @var User|null $user */
         $user = null;
+        /** @var PatientProfile|null $patientProfile */
+        $patientProfile = null;
 
-        $patientProfile = DB::transaction(function () use ($validatedData, &$user) {
+        DB::transaction(function () use ($validatedData, &$user, &$patientProfile) {
             Log::info('Starting transaction');
             $user = User::create([
                 'name' => $validatedData['nama'],
@@ -76,7 +79,7 @@ class PatientProfileController extends Controller
                 'user_id' => $user->id,
                 'nik' => $validatedData['nik'],
                 'nama' => $validatedData['nama'],
-                'umur' => $validatedData['umur'],
+                'tanggal_lahir' => $validatedData['tanggal_lahir'],
                 'suku_bangsa' => $validatedData['suku_bangsa'],
                 'agama' => $validatedData['agama'],
                 'bb' => $validatedData['bb'],
@@ -93,9 +96,8 @@ class PatientProfileController extends Controller
                 'perkawinan_pasangan' => $validatedData['status_perkawinan'],
             ];
 
-            $profile = PatientProfile::create($profileData);
-            Log::info('PatientProfile created', ['profile_id' => $profile->id]);
-            return $profile;
+            $patientProfile = PatientProfile::create($profileData);
+            Log::info('PatientProfile created', ['profile_id' => $patientProfile->id]);
         });
 
         Log::info('Transaction completed, redirecting', ['user_id' => $user->id]);

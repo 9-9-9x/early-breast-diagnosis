@@ -28,6 +28,7 @@ class DashboardController extends Controller
             ['value' => 'sumberpinang', 'label' => 'Sumberpinang'],
             ['value' => 'jatian', 'label' => 'Jatian'],
             ['value' => 'bedadung', 'label' => 'Bedadung'],
+            ['value' => 'kertosari', 'label' => 'Kertosari'],
         ];
 
         // Get sasaran and target from database

@@ -222,4 +222,57 @@ class ReportController extends Controller
 
         return Excel::download(new DiseaseReportExport($filters), $fileName);
     }
+
+    /**
+     * Export disease report to PDF
+     */
+    public function exportDiseasePdf(Request $request)
+    {
+        // Build base query
+        $baseQuery = BreastResult::query();
+
+        if ($request->filled('periode_awal')) {
+            $baseQuery->whereDate('created_at', '>=', $request->periode_awal);
+        }
+        if ($request->filled('periode_akhir')) {
+            $baseQuery->whereDate('created_at', '<=', $request->periode_akhir);
+        }
+        if ($request->filled('wilayah')) {
+            $baseQuery->whereHas('user.patientProfile', function ($q) use ($request) {
+                $q->whereRaw('LOWER(desa_kelurahan) = ?', [strtolower($request->wilayah)]);
+            });
+        }
+
+        $normalCount = (clone $baseQuery)->whereRaw('LOWER(prediction) = ?', ['normal'])->count();
+        $jinakCount = (clone $baseQuery)->whereRaw('LOWER(prediction) LIKE ?', ['%jinak%'])->count();
+        $ganasCount = (clone $baseQuery)->whereRaw('LOWER(prediction) LIKE ?', ['%ganas%'])->count();
+
+        $statistics = [
+            ['no' => 1, 'hasil' => 'Normal', 'total' => $normalCount],
+            ['no' => 2, 'hasil' => 'Suspect Kelainan Payudara Jinak', 'total' => $jinakCount],
+            ['no' => 3, 'hasil' => 'Suspect Kelainan Payudara Ganas', 'total' => $ganasCount],
+        ];
+
+        // Pre-filled data
+        $headerData = [
+            'kabupaten' => 'Jember',
+            'provinsi' => 'Jawa Timur',
+            'kepala_puskesmas' => 'Dr. Dian Alfiyatul Uliyah',
+            'puskesmas' => 'Pakusari',
+            'periode_awal' => $request->input('periode_awal'),
+            'periode_akhir' => $request->input('periode_akhir'),
+            'wilayah' => $request->input('wilayah'),
+        ];
+
+        $fileName = 'Rekapitulasi_Penyakit_' . date('YmdHis') . '.pdf';
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.disease-report', [
+            'statistics' => $statistics,
+            'headerData' => $headerData,
+        ]);
+
+        $pdf->setPaper('a4', 'portrait');
+
+        return $pdf->download($fileName);
+    }
 }

@@ -75,6 +75,7 @@
                                     <option value="sumberpinang" class="text-black" {{ request('wilayah') == 'sumberpinang' ? 'selected' : '' }}>Sumberpinang</option>
                                     <option value="jatian" class="text-black" {{ request('wilayah') == 'jatian' ? 'selected' : '' }}>Jatian</option>
                                     <option value="bedadung" class="text-black" {{ request('wilayah') == 'bedadung' ? 'selected' : '' }}>Bedadung</option>
+                                    <option value="kertosari" class="text-black" {{ request('wilayah') == 'kertosari' ? 'selected' : '' }}>Kertosari</option>
                                 </select>
                                 <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
                                     <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor"
@@ -110,10 +111,10 @@
         {{-- CARD 2: TABEL DATA --}}
         <div class="bg-white rounded-2xl shadow-lg p-6" id="tableCard">
             <div class="flex justify-end items-center gap-4 mb-6">
-                <button type="button" onclick="exportToExcel()"
+                <button type="button" onclick="exportToPdf()"
                     class="h-14 px-8 rounded-xl bg-[#3e7b27] text-white font-semibold text-2xl hover:bg-opacity-90 transition shadow-sm flex items-center justify-center gap-2">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                     </svg>
                     Cetak Laporan
                 </button>
@@ -266,6 +267,20 @@
                 }
 
                 window.location.href = `{{ route('report.export-disease') }}?${params.toString()}`;
+            };
+
+            // Export to PDF function
+            window.exportToPdf = function() {
+                const formData = new FormData(filterForm);
+                const params = new URLSearchParams();
+
+                for (let [key, value] of formData.entries()) {
+                    if (value && key !== 'type') {
+                        params.append(key, value);
+                    }
+                }
+
+                window.location.href = `{{ route('report.export-disease-pdf') }}?${params.toString()}`;
             };
 
             // Reset button click

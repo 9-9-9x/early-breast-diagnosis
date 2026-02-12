@@ -87,7 +87,7 @@
 
     document.addEventListener('DOMContentLoaded', function () {
         const ctx = document.getElementById('detectionChart').getContext('2d');
-        
+
         // Data dari backend
         const labels = @json($monthlyData['labels']);
         const normalData = @json($monthlyData['normal']);
@@ -99,60 +99,54 @@
         const yAxisMax = Math.ceil(maxValue / 10) * 10 + 10;
 
         chart = new Chart(ctx, {
-            type: 'line',
-            data: { 
-                labels, 
-                datasets: [ 
-                    { 
-                        label: 'Normal', 
-                        data: normalData, 
-                        borderColor: '#22c55e', 
-                        backgroundColor: '#22c55e', 
-                        tension: 0.3, 
-                        pointRadius: 6, 
-                        pointHoverRadius: 8,
-                        borderWidth: 3
-                    }, 
-                    { 
-                        label: 'Jinak', 
-                        data: jinakData, 
-                        borderColor: '#eab308', 
-                        backgroundColor: '#eab308', 
-                        tension: 0.3, 
-                        pointRadius: 6, 
-                        pointHoverRadius: 8,
-                        borderWidth: 3
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [
+                    {
+                        label: 'Normal',
+                        data: normalData,
+                        borderColor: '#22c55e',
+                        backgroundColor: '#22c55e',
+                        borderWidth: 2,
+                        borderRadius: 4
                     },
-                    { 
-                        label: 'Ganas', 
-                        data: ganasData, 
-                        borderColor: '#ef4444', 
-                        backgroundColor: '#ef4444', 
-                        tension: 0.3, 
-                        pointRadius: 6, 
-                        pointHoverRadius: 8,
-                        borderWidth: 3
-                    } 
-                ] 
+                    {
+                        label: 'Jinak',
+                        data: jinakData,
+                        borderColor: '#eab308',
+                        backgroundColor: '#eab308',
+                        borderWidth: 2,
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Ganas',
+                        data: ganasData,
+                        borderColor: '#ef4444',
+                        backgroundColor: '#ef4444',
+                        borderWidth: 2,
+                        borderRadius: 4
+                    }
+                ]
             },
-            options: { 
-                responsive: true, 
-                maintainAspectRatio: true, 
-                scales: { 
-                    y: { 
-                        beginAtZero: true, 
-                        max: yAxisMax > 0 ? yAxisMax : 10, 
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: yAxisMax > 0 ? yAxisMax : 10,
                         grid: { color: '#E5E7EB' },
                         ticks: {
                             stepSize: 5
                         }
-                    }, 
-                    x: { 
-                        grid: { display: false } 
-                    } 
-                }, 
-                plugins: { 
-                    legend: { 
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                },
+                plugins: {
+                    legend: {
                         display: true,
                         position: 'bottom',
                         labels: {
@@ -162,17 +156,17 @@
                                 size: 12
                             }
                         }
-                    }, 
-                    tooltip: { 
-                        mode: 'index', 
+                    },
+                    tooltip: {
+                        mode: 'index',
                         intersect: false,
                         callbacks: {
                             label: function(context) {
                                 return context.dataset.label + ': ' + context.parsed.y + ' orang';
                             }
                         }
-                    } 
-                } 
+                    }
+                }
             }
         });
 
@@ -194,9 +188,9 @@
             .then(response => response.json())
             .then(data => {
                 // Update stats
-                document.querySelector('.grid > div:nth-child(2) > p:nth-child(2)').textContent = 
+                document.querySelector('.grid > div:nth-child(2) > p:nth-child(2)').textContent =
                     new Intl.NumberFormat('id-ID').format(data.capaian);
-                document.querySelector('.grid > div:nth-child(3) > p:nth-child(2)').textContent = 
+                document.querySelector('.grid > div:nth-child(3) > p:nth-child(2)').textContent =
                     parseFloat(data.persentase).toFixed(2) + '%';
 
                 // Update chart

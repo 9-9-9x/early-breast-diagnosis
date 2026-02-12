@@ -7,7 +7,7 @@
 @php
     // Tentukan apakah berisiko berdasarkan hasil prediksi dari API
     $isBerisiko = false;
-    
+
     if ($predictionResult && isset($predictionResult['result'])) {
         // API return "Suspect" atau "Non-Suspect"
         $isBerisiko = (strtolower($predictionResult['result']) == 'suspect');
@@ -26,14 +26,14 @@
             </h1>
         </div>
 
-        {{-- Card Body --}} 
+        {{-- Card Body --}}
         <div class="p-8 space-y-8">
 
             {{-- KOTAK HASIL ATAS (DINAMIS) --}}
             @if ($isBerisiko)
                 {{-- Versi: BERISIKO --}}
-                <div class="w-full p-8 rounded-2xl bg-[#3e7b27] flex items-center justify-center">
-                    <h2 class="text-4xl sm:text-5xl font-semibold text-center text-red-500 leading-tight">
+                <div class="w-full p-8 rounded-2xl bg-red-600 flex items-center justify-center">
+                    <h2 class="text-4xl sm:text-5xl font-semibold text-center text-white leading-tight">
                         Berisiko Suspect Penyakit Kanker Payudara
                     </h2>
                 </div>

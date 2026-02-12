@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,7 +15,7 @@ class PatientProfile extends Model
         'user_id',
         'nik',
         'nama',
-        'umur',
+        'tanggal_lahir',
         'suku_bangsa',
         'agama',
         'bb',
@@ -30,6 +31,21 @@ class PatientProfile extends Model
         'pekerjaan_suami',
         'perkawinan_pasangan',
     ];
+
+    protected $casts = [
+        'tanggal_lahir' => 'date',
+    ];
+
+    /**
+     * Get the calculated age from tanggal_lahir.
+     */
+    public function getUmurAttribute()
+    {
+        if ($this->tanggal_lahir) {
+            return Carbon::parse($this->tanggal_lahir)->diffInYears(now());
+        }
+        return null;
+    }
 
     /**
      * @return BelongsTo<User,PatientProfile>

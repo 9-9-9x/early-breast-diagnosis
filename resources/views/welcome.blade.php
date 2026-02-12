@@ -26,11 +26,8 @@
 
                 {{-- Right Side: Action Buttons --}}
                 <div class="flex items-center gap-x-4">
-                    <a href="{{ route('login') }}" class="flex items-center justify-center w-36 h-12 rounded-2xl border border-[#123524] text-lg font-semibold text-[#123524] hover:bg-gray-100 transition">
+                    <a href="{{ route('login') }}" class="flex items-center justify-center w-36 h-12 rounded-2xl bg-[#3e7b27] text-lg font-semibold text-white hover:bg-opacity-90 transition">
                         Login
-                    </a>
-                    <a href="{{ route('register') }}" class="flex items-center justify-center w-36 h-12 rounded-2xl bg-[#3e7b27] text-lg font-semibold text-white hover:bg-opacity-90 transition">
-                        Daftar
                     </a>
                 </div>
             </nav>

@@ -82,14 +82,7 @@
                     </button>
                 </form>
 
-                <div class="mt-8 text-center">
-                    <p class="text-xl text-black">
-                        Belum punya akun?
-                        <a href="{{ route('register') }}" class="font-semibold text-[#3e7b27] hover:underline">
-                            Daftar
-                        </a>
-                    </p>
-                </div>
+
             </div>
         </div>
     </main>
