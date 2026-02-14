@@ -229,7 +229,7 @@ class ReportController extends Controller
     public function exportDiseasePdf(Request $request)
     {
         // Build base query
-        $baseQuery = BreastResult::query();
+        $baseQuery = BreastResult::query()->with('user.patientProfile');
 
         if ($request->filled('periode_awal')) {
             $baseQuery->whereDate('created_at', '>=', $request->periode_awal);
@@ -243,15 +243,45 @@ class ReportController extends Controller
             });
         }
 
-        $normalCount = (clone $baseQuery)->whereRaw('LOWER(prediction) = ?', ['normal'])->count();
-        $jinakCount = (clone $baseQuery)->whereRaw('LOWER(prediction) LIKE ?', ['%jinak%'])->count();
-        $ganasCount = (clone $baseQuery)->whereRaw('LOWER(prediction) LIKE ?', ['%ganas%'])->count();
+        // Get all results
+        $results = $baseQuery->get();
 
-        $statistics = [
-            ['no' => 1, 'hasil' => 'Normal', 'total' => $normalCount],
-            ['no' => 2, 'hasil' => 'Suspect Kelainan Payudara Jinak', 'total' => $jinakCount],
-            ['no' => 3, 'hasil' => 'Suspect Kelainan Payudara Ganas', 'total' => $ganasCount],
+        // Age group statistics
+        $ageGroups = [
+            ['no' => 1, 'label' => 'Usia < 30 tahun', 'min' => 0, 'max' => 29],
+            ['no' => 2, 'label' => 'Usia 30-39 tahun', 'min' => 30, 'max' => 39],
+            ['no' => 3, 'label' => 'Usia 40-50 tahun', 'min' => 40, 'max' => 50],
+            ['no' => 4, 'label' => 'Usia > 50 tahun', 'min' => 51, 'max' => 999],
         ];
+
+        $statistics = [];
+        foreach ($ageGroups as $group) {
+            $groupResults = $results->filter(function ($result) use ($group) {
+                $age = $result->user->patientProfile->umur ?? 0;
+                return $age >= $group['min'] && $age <= $group['max'];
+            });
+
+            $normal = $groupResults->filter(function ($r) {
+                return strtolower($r->prediction) === 'normal';
+            })->count();
+
+            $jinak = $groupResults->filter(function ($r) {
+                return stripos($r->prediction, 'jinak') !== false;
+            })->count();
+
+            $ganas = $groupResults->filter(function ($r) {
+                return stripos($r->prediction, 'ganas') !== false;
+            })->count();
+
+            $statistics[] = [
+                'no' => $group['no'],
+                'kelompok_umur' => $group['label'],
+                'normal' => $normal,
+                'jinak' => $jinak,
+                'ganas' => $ganas,
+                'total' => $normal + $jinak + $ganas,
+            ];
+        }
 
         // Pre-filled data
         $headerData = [

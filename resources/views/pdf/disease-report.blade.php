@@ -2,38 +2,88 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Rekapitulasi Penyakit</title>
+    <title>Rekapitulasi Deteksi Dini Kanker Payudara</title>
     <style>
+        @page {
+            margin: 1cm;
+            size: A4 portrait;
+        }
         body {
             font-family: Arial, sans-serif;
-            font-size: 12px;
+            font-size: 11pt;
             color: #000;
             margin: 0;
-            padding: 20px;
+            padding: 0;
         }
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            border-bottom: 3px double #000;
+            padding-bottom: 10px;
+            position: relative;
         }
-        .header h2 {
-            margin: 5px 0;
-            font-size: 16px;
+        .header-content {
+            display: table;
+            width: 100%;
+        }
+        .logo-left {
+            display: table-cell;
+            width: 80px;
+            vertical-align: middle;
+            text-align: left;
+        }
+        .logo-left img {
+            height: 70px;
+            width: auto;
+        }
+        .header-text {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+        }
+        .logo-right {
+            display: table-cell;
+            width: 80px;
+            vertical-align: middle;
+            text-align: right;
+        }
+        .logo-right img {
+            height: 70px;
+            width: auto;
         }
         .header h3 {
-            margin: 5px 0;
-            font-size: 14px;
+            margin: 2px 0;
+            font-size: 11pt;
+            font-weight: bold;
+        }
+        .header p {
+            margin: 1px 0;
+            font-size: 9pt;
+        }
+        .title {
+            text-align: center;
+            font-size: 12pt;
+            font-weight: bold;
+            margin: 15px 0;
         }
         .info-table {
             width: 100%;
             margin-bottom: 20px;
+            border-collapse: collapse;
         }
         .info-table td {
-            padding: 4px 8px;
+            padding: 3px 0;
             vertical-align: top;
+            font-size: 11pt;
         }
         .info-table .label {
-            width: 180px;
-            font-weight: bold;
+            width: 30%;
+        }
+        .info-table .colon {
+            width: 2%;
+        }
+        .info-table .value {
+            width: 18%;
         }
         table.data-table {
             width: 100%;
@@ -43,92 +93,140 @@
         table.data-table th,
         table.data-table td {
             border: 1px solid #000;
-            padding: 8px 12px;
-            text-align: left;
+            padding: 6px 8px;
+            text-align: center;
+            font-size: 10pt;
         }
         table.data-table th {
-            background-color: #f0f0f0;
             font-weight: bold;
+            vertical-align: middle;
         }
-        table.data-table .text-right {
-            text-align: right;
+        table.data-table td.text-left {
+            text-align: left;
         }
-        table.data-table .text-center {
-            text-align: center;
-        }
-        .footer-total td {
+        table.data-table .footer-total td {
             font-weight: bold;
-            background-color: #f0f0f0;
         }
         .signature {
             margin-top: 40px;
             float: right;
             text-align: center;
             width: 250px;
+            font-size: 11pt;
+        }
+        .signature p {
+            margin: 3px 0;
+        }
+        .signature .date {
+            margin-bottom: 60px;
         }
         .signature .name {
-            margin-top: 80px;
-            font-weight: bold;
             text-decoration: underline;
+            font-weight: normal;
         }
     </style>
 </head>
 <body>
+    <!-- Header -->
     <div class="header">
-        <h2>REKAPITULASI DETEKSI DINI KANKER PAYUDARA</h2>
-        <h3>PUSKESMAS {{ strtoupper($headerData['puskesmas']) }}</h3>
+        <div class="header-content">
+            <div class="logo-left">
+                <img src="{{ public_path('images/logo-kemenkes.jpg') }}" alt="Logo Kemenkes" />
+            </div>
+            <div class="header-text">
+                <h3>KEMENTERIAN KESEHATAN REPUBLIK INDONESIA</h3>
+                <h3>DIREKTORAT JENDERAL</h3>
+                <h3>PENCEGAHAN DAN PENGENDALIAN PENYAKIT</h3>
+                <p>Jalan H. R. Rasuna Said Blok X-5 Kavling 4-9 Jakarta 12950</p>
+                <p>Telepon (021) 5201590 (Hunting)</p>
+            </div>
+            <div class="logo-right">
+                <img src="{{ public_path('images/logo-dinas.jpg') }}" alt="Logo Dinas" />
+            </div>
+        </div>
     </div>
 
+    <!-- Title -->
+    <div class="title">
+        REKAPITULASI DETEKSI DINI<br>
+        KANKER PAYUDARA PUSKESMAS {{ strtoupper($headerData['puskesmas']) }}
+    </div>
+
+    <!-- Info Table -->
     <table class="info-table">
         <tr>
             <td class="label">Kabupaten/Kota</td>
-            <td>: {{ $headerData['kabupaten'] }}</td>
+            <td class="colon">:</td>
+            <td class="value">{{ $headerData['kabupaten'] }}</td>
+            <td class="label" style="text-align: right;">Bulan</td>
+            <td class="colon">:</td>
+            <td class="value"></td>
         </tr>
         <tr>
             <td class="label">Provinsi</td>
-            <td>: {{ $headerData['provinsi'] }}</td>
+            <td class="colon">:</td>
+            <td class="value">{{ $headerData['provinsi'] }}</td>
+            <td class="label" style="text-align: right;">Tahun</td>
+            <td class="colon">:</td>
+            <td class="value"></td>
         </tr>
-        @if($headerData['periode_awal'] || $headerData['periode_akhir'])
-        <tr>
-            <td class="label">Periode</td>
-            <td>: {{ $headerData['periode_awal'] ? \Carbon\Carbon::parse($headerData['periode_awal'])->format('d/m/Y') : '-' }} s/d {{ $headerData['periode_akhir'] ? \Carbon\Carbon::parse($headerData['periode_akhir'])->format('d/m/Y') : '-' }}</td>
-        </tr>
-        @endif
-        @if($headerData['wilayah'])
-        <tr>
-            <td class="label">Wilayah</td>
-            <td>: {{ ucfirst($headerData['wilayah']) }}</td>
-        </tr>
-        @endif
     </table>
 
+    <!-- Data Table -->
     <table class="data-table">
         <thead>
             <tr>
-                <th class="text-center" style="width: 50px;">No</th>
-                <th>Hasil Pemeriksaan</th>
-                <th class="text-right" style="width: 100px;">Total</th>
+                <th rowspan="2" style="width: 40px;">No</th>
+                <th rowspan="2" style="width: 150px;">Kelompok Umur</th>
+                <th colspan="3">Hasil Pemeriksaan Payudara</th>
+                <th rowspan="2" style="width: 60px;">Total</th>
+            </tr>
+            <tr>
+                <th style="width: 80px;">Normal</th>
+                <th style="width: 130px;"><i>Suspect</i> Kelainan<br>Payudara Jinak</th>
+                <th style="width: 130px;"><i>Suspect</i> Kelainan<br>Payudara Ganas</th>
             </tr>
         </thead>
         <tbody>
+            @php
+                $totalNormal = 0;
+                $totalJinak = 0;
+                $totalGanas = 0;
+                $totalAll = 0;
+            @endphp
             @foreach($statistics as $stat)
             <tr>
-                <td class="text-center">{{ $stat['no'] }}</td>
-                <td>{{ $stat['hasil'] }}</td>
-                <td class="text-right">{{ $stat['total'] }}</td>
+                <td>{{ $stat['no'] }}</td>
+                <td class="text-left">{{ $stat['kelompok_umur'] }}</td>
+                <td>{{ $stat['normal'] }}</td>
+                <td>{{ $stat['jinak'] }}</td>
+                <td>{{ $stat['ganas'] }}</td>
+                <td>{{ $stat['total'] }}</td>
             </tr>
+            @php
+                $totalNormal += $stat['normal'];
+                $totalJinak += $stat['jinak'];
+                $totalGanas += $stat['ganas'];
+                $totalAll += $stat['total'];
+            @endphp
             @endforeach
             <tr class="footer-total">
-                <td colspan="2">Total Keseluruhan</td>
-                <td class="text-right">{{ collect($statistics)->sum('total') }}</td>
+                <td colspan="2">Total</td>
+                <td>{{ $totalNormal }}</td>
+                <td>{{ $totalJinak }}</td>
+                <td>{{ $totalGanas }}</td>
+                <td>{{ $totalAll }}</td>
             </tr>
         </tbody>
     </table>
 
+    <!-- Signature -->
     <div class="signature">
-        <p>Kepala Puskesmas {{ $headerData['puskesmas'] }}</p>
-        <p class="name">{{ $headerData['kepala_puskesmas'] }}</p>
-        <p>NIP. </p>
+        <p class="date">Jember, ... / ... / 20....</p>
+        <p>Kepala Puskesmas</p>
+        <br><br><br>
+        <p class="name">( {{ $headerData['kepala_puskesmas'] }} )</p>
+        <p>NIP. 198602132014122001</p>
     </div>
 </body>
 </html>

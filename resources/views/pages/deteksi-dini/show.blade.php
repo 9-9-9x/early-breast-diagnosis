@@ -26,7 +26,7 @@
 
                 @if ($resultType == 'normal')
                     {{-- Tampilan untuk Hasil NORMAL --}}
-                    <div class="w-full h-64 rounded-2xl bg-green-600 flex items-center justify-center">
+                    <div class="w-full h-64 rounded-2xl flex items-center justify-center" style="background-color: #3e7b27;">
                         <p class="text-8xl font-semibold text-center text-white">Normal</p>
                     </div>
                     <div class="mt-12 space-y-6">
@@ -52,7 +52,7 @@
 
                 @elseif ($resultType == 'jinak')
                     {{-- Tampilan untuk Hasil JINAK --}}
-                    <div class="w-full h-64 rounded-2xl bg-yellow-500 flex flex-col items-center justify-center text-center">
+                    <div class="w-full h-64 rounded-2xl flex flex-col items-center justify-center text-center" style="background-color: #eab308;">
                         <p class="text-8xl font-semibold italic text-white -mb-4">Suspect</p>
                         <p class="text-6xl font-semibold text-white">Kelainan Payudara Jinak</p>
                     </div>
@@ -67,7 +67,7 @@
 
                 @else {{-- Anggap saja ini untuk 'ganas' --}}
                     {{-- Tampilan untuk Hasil GANAS --}}
-                    <div class="w-full h-64 rounded-2xl bg-red-600 flex flex-col items-center justify-center text-center">
+                    <div class="w-full h-64 rounded-2xl flex flex-col items-center justify-center text-center" style="background-color: #dc2626;">
                         <p class="text-8xl font-semibold italic text-white -mb-4">Suspect</p>
                         <p class="text-6xl font-semibold text-white">Kelainan Payudara Ganas</p>
                     </div>

@@ -51,25 +51,98 @@
             </div>
             @endif
 
-            <div x-data="{ kanan: {{ old('payudara_kanan') ? 'true' : 'false' }}, kiri: {{ old('payudara_kiri') ? 'true' : 'false' }} }">
-                <div class="flex items-center justify-center mb-8">
-                    <img src="{{ asset('payudara.png') }}" alt="Logo Puskesmas" class="h-48 object-contain">
-                </div>
-
+            <div x-data="{
+                kanan: {{ old('payudara_kanan', '0') == '1' ? 'true' : 'false' }},
+                kiri: {{ old('payudara_kiri', '0') == '1' ? 'true' : 'false' }},
+                showAnnotation: {{ old('benjolan_radio') == 'ya' ? 'true' : 'false' }}
+            }">
                 <div class="flex flex-col sm:flex-row justify-center items-center gap-12 mb-8">
                     <div class="flex flex-col items-center gap-y-4">
                         <div class="flex items-center">
-                            <input type="checkbox" id="payudara_kanan" name="payudara_kanan" class="w-6 h-6 text-[#85a947] border-gray-400 rounded focus:ring-[#85a947]" value="1" {{ old('payudara_kanan') ? 'checked' : '' }} x-model="kanan">
+                            <input type="hidden" name="payudara_kanan" value="0">
+                            <input type="checkbox" id="payudara_kanan" name="payudara_kanan" class="w-6 h-6 text-[#85a947] border-gray-400 rounded focus:ring-[#85a947]" value="1" {{ old('payudara_kanan', '0') == '1' ? 'checked' : '' }} x-model="kanan">
                             <label for="payudara_kanan" class="ml-3 text-xl text-black">Payudara Kanan</label>
                         </div>
                     </div>
                     <div class="flex flex-col items-center gap-y-4">
                         <div class="flex items-center">
-                            <input type="checkbox" id="payudara_kiri" name="payudara_kiri" class="w-6 h-6 text-[#85a947] border-gray-400 rounded focus:ring-[#85a947]" value="1" {{ old('payudara_kiri') ? 'checked' : '' }} x-model="kiri">
+                            <input type="hidden" name="payudara_kiri" value="0">
+                            <input type="checkbox" id="payudara_kiri" name="payudara_kiri" class="w-6 h-6 text-[#85a947] border-gray-400 rounded focus:ring-[#85a947]" value="1" {{ old('payudara_kiri', '0') == '1' ? 'checked' : '' }} x-model="kiri">
                             <label for="payudara_kiri" class="ml-3 text-xl text-black">Payudara Kiri</label>
                         </div>
                     </div>
                 </div>
+
+                {{-- Breast Image Canvas - Show when breast selected, editable when benjolan exists --}}
+                <template x-if="kanan || kiri">
+                    <div class="w-full max-w-5xl mx-auto mb-8"
+                         x-init="setTimeout(() => initCanvas(), 100)">
+                        <h3 class="text-2xl font-semibold text-black mb-4 text-center" x-show="showAnnotation">Tandai Lokasi Kelainan pada Gambar</h3>
+
+                        {{-- Legend Section - Only show when annotation is active --}}
+                        <div x-show="showAnnotation"
+                             x-transition
+                             class="bg-gray-50 rounded-lg p-6 mb-6 border border-gray-200">
+                            <h4 class="text-xl font-semibold text-black mb-4">Beri tanda pada gambar:</h4>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 border-2 border-black rounded-full bg-black" style="background-color: black !important;"></div>
+                                    <span class="text-lg">Keras</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 border-2 border-black rounded-full relative overflow-hidden bg-white">
+                                        <div class="absolute inset-0" style="background: repeating-linear-gradient(45deg, transparent, transparent 3px, #000 3px, #000 4px);"></div>
+                                    </div>
+                                    <span class="text-lg">Kenyal</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 border-2 border-black rounded-full bg-white"></div>
+                                    <span class="text-lg">Bergerak</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 border-2 border-black rounded-full bg-white flex items-center justify-center">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="stroke: black !important;">
+                                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                                        </svg>
+                                    </div>
+                                    <span class="text-lg">Tidak Bergerak</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Canvas Container --}}
+                        <div class="flex flex-col items-center">
+                            <div class="relative border-2 border-gray-300 rounded-lg overflow-hidden bg-white">
+                                <canvas id="breast-canvas"
+                                        width="600"
+                                        height="400"
+                                        :class="showAnnotation ? 'cursor-crosshair' : 'cursor-default'"></canvas>
+                            </div>
+
+                            {{-- Controls - Only show when annotation is active --}}
+                            <div x-show="showAnnotation"
+                                 x-transition
+                                 class="flex gap-4 mt-6">
+                                <button type="button" onclick="clearAnnotations()" class="px-6 py-3 rounded-lg border-2 border-red-600 text-red-600 font-semibold text-lg hover:bg-red-50 transition">
+                                    <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                    Hapus Semua Tanda
+                                </button>
+                                <button type="button" onclick="undoLastMark()" class="px-6 py-3 rounded-lg border-2 border-gray-600 text-gray-600 font-semibold text-lg hover:bg-gray-50 transition">
+                                    <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path>
+                                    </svg>
+                                    Batalkan Tanda Terakhir
+                                </button>
+                            </div>
+                        </div>
+
+                        {{-- Hidden input to store abnormality image --}}
+                        <input type="hidden" id="abnormality_image" name="abnormality_image">
+                    </div>
+                </template>
 
                 {{-- Bagian Form Input - hanya tampil jika payudara dipilih --}}
                 <template x-if="kanan || kiri">
@@ -161,11 +234,17 @@
                             <label class="{{ $labelClasses }}">Benjolan pada Payudara <span class="text-red-600">*</span></label>
                             <div class="flex flex-wrap items-center gap-x-8 gap-y-4">
                                 <div class="flex items-center">
-                                    <input type="radio" id="benjolan_tidak" name="benjolan_radio" value="tidak" class="{{ $checkboxClasses }}" {{ old('benjolan_radio') == 'tidak' ? 'checked' : '' }}>
+                                    <input type="radio" id="benjolan_tidak" name="benjolan_radio" value="tidak"
+                                           class="{{ $checkboxClasses }}"
+                                           {{ old('benjolan_radio') == 'tidak' ? 'checked' : '' }}
+                                           @change="showAnnotation = false; clearAnnotations()">
                                     <label for="benjolan_tidak" class="{{ $checkboxLabelClasses }}">Tidak</label>
                                 </div>
                                 <div class="flex items-center">
-                                    <input type="radio" id="benjolan_ya" name="benjolan_radio" value="ya" class="{{ $checkboxClasses }}" {{ old('benjolan_radio') == 'ya' ? 'checked' : '' }}>
+                                    <input type="radio" id="benjolan_ya" name="benjolan_radio" value="ya"
+                                           class="{{ $checkboxClasses }}"
+                                           {{ old('benjolan_radio') == 'ya' ? 'checked' : '' }}
+                                           @change="showAnnotation = true; setTimeout(() => initCanvas(), 100)">
                                     <label for="benjolan_ya" class="{{ $checkboxLabelClasses }}">Ya, Ukuran :</label>
                                 </div>
                                 <input type="text" id="benjolan_ukuran" name="benjolan_ukuran" placeholder="... x ... cm" class="{{ $inputClasses }}" value="{{ old('benjolan_ukuran') }}">
@@ -180,19 +259,31 @@
                                     $kelainanValues = old('kelainan', []);
                                 @endphp
                                 <div class="flex items-center">
-                                    <input type="checkbox" id="kelainan_kenyal" name="kelainan[]" value="kenyal" class="{{ $checkboxClasses }}" {{ in_array('kenyal', $kelainanValues) ? 'checked' : '' }}>
+                                    <input type="checkbox" id="kelainan_kenyal" name="kelainan[]" value="kenyal"
+                                           class="{{ $checkboxClasses }}"
+                                           {{ in_array('kenyal', $kelainanValues) ? 'checked' : '' }}
+                                           @change="updateMarkerTypes()">
                                     <label for="kelainan_kenyal" class="{{ $checkboxLabelClasses }}">Kenyal</label>
                                 </div>
                                 <div class="flex items-center">
-                                    <input type="checkbox" id="kelainan_keras" name="kelainan[]" value="keras" class="{{ $checkboxClasses }}" {{ in_array('keras', $kelainanValues) ? 'checked' : '' }}>
+                                    <input type="checkbox" id="kelainan_keras" name="kelainan[]" value="keras"
+                                           class="{{ $checkboxClasses }}"
+                                           {{ in_array('keras', $kelainanValues) ? 'checked' : '' }}
+                                           @change="updateMarkerTypes()">
                                     <label for="kelainan_keras" class="{{ $checkboxLabelClasses }}">Keras</label>
                                 </div>
                                 <div class="flex items-center">
-                                    <input type="checkbox" id="kelainan_bergerak" name="kelainan[]" value="bergerak" class="{{ $checkboxClasses }}" {{ in_array('bergerak', $kelainanValues) ? 'checked' : '' }}>
+                                    <input type="checkbox" id="kelainan_bergerak" name="kelainan[]" value="bergerak"
+                                           class="{{ $checkboxClasses }}"
+                                           {{ in_array('bergerak', $kelainanValues) ? 'checked' : '' }}
+                                           @change="updateMarkerTypes()">
                                     <label for="kelainan_bergerak" class="{{ $checkboxLabelClasses }}">Bergerak</label>
                                 </div>
                                 <div class="flex items-center">
-                                    <input type="checkbox" id="kelainan_tidak_bergerak" name="kelainan[]" value="tidak_bergerak" class="{{ $checkboxClasses }}" {{ in_array('tidak_bergerak', $kelainanValues) ? 'checked' : '' }}>
+                                    <input type="checkbox" id="kelainan_tidak_bergerak" name="kelainan[]" value="tidak_bergerak"
+                                           class="{{ $checkboxClasses }}"
+                                           {{ in_array('tidak_bergerak', $kelainanValues) ? 'checked' : '' }}
+                                           @change="updateMarkerTypes()">
                                     <label for="kelainan_tidak_bergerak" class="{{ $checkboxLabelClasses }}">Tidak Bergerak</label>
                                 </div>
                             </div>
@@ -311,6 +402,249 @@
         } else {
             display.textContent = 'Pilih kondisi areola/papilla';
             display.style.color = '#6b7280';
+        }
+    }
+
+    // ===== IMAGE ANNOTATION FUNCTIONALITY =====
+    let canvas, ctx, img;
+    let markers = [];
+    let selectedMarkerTypes = [];
+    let canvasInitialized = false;
+    let annotationEnabled = {{ old('benjolan_radio') == 'ya' ? 'true' : 'false' }};
+    let markerRadius = 15; // Default radius in pixels
+
+    // Breast image scale configuration
+    // Assumes breast examination area is approximately 20cm wide in real life
+    const REFERENCE_BREAST_WIDTH_CM = 20; // Real-world breast examination area width
+    const CANVAS_WIDTH = 600; // Canvas width in pixels
+    // Scale factor: pixels per cm based on breast image proportion
+    const SCALE_FACTOR = CANVAS_WIDTH / REFERENCE_BREAST_WIDTH_CM; // 30 pixels per cm
+
+    // Initialize canvas
+    function initCanvas() {
+        if (canvasInitialized) return;
+
+        canvas = document.getElementById('breast-canvas');
+        if (!canvas) {
+            console.log('Canvas not found, retrying...');
+            setTimeout(initCanvas, 100);
+            return;
+        }
+
+        ctx = canvas.getContext('2d');
+
+        // Load the breast image
+        img = new Image();
+        img.onload = function() {
+            drawCanvas();
+            canvasInitialized = true;
+        };
+        img.src = '{{ asset('payudara.png') }}';
+
+        // Add click listener to canvas
+        canvas.addEventListener('click', handleCanvasClick);
+
+        // Initialize marker types based on current selections
+        updateMarkerTypes();
+
+        // Add size input listener
+        const sizeInput = document.getElementById('benjolan_ukuran');
+        if (sizeInput) {
+            sizeInput.addEventListener('input', handleSizeChange);
+            // Parse initial value if exists
+            handleSizeChange();
+        }
+    }
+
+    // Update marker types from checkboxes
+    function updateMarkerTypes() {
+        selectedMarkerTypes = [];
+        const kelainanCheckboxes = document.querySelectorAll('input[name="kelainan[]"]:checked');
+        kelainanCheckboxes.forEach(cb => {
+            selectedMarkerTypes.push(cb.value);
+        });
+        console.log('Updated marker types:', selectedMarkerTypes);
+    }
+
+    // Parse size input and update marker radius
+    function handleSizeChange() {
+        const sizeInput = document.getElementById('benjolan_ukuran');
+        if (!sizeInput || !sizeInput.value) {
+            markerRadius = 15; // Default size (~0.3cm)
+            if (canvasInitialized) drawCanvas();
+            return;
+        }
+
+        const value = sizeInput.value.trim();
+        // Match patterns like: "2 x 3", "2x3", "2.5 x 3.5", "2"
+        const numbers = value.match(/\d+(\.\d+)?/g);
+
+        if (numbers && numbers.length > 0) {
+            // Convert to floats and get average (or single value)
+            const dimensions = numbers.map(n => parseFloat(n));
+            const avgSize = dimensions.reduce((a, b) => a + b, 0) / dimensions.length;
+
+            // Calculate radius using proportional scale
+            // Diameter in cm → radius in pixels using breast image scale
+            // avgSize is diameter, so radius = (avgSize / 2) * SCALE_FACTOR
+            const calculatedRadius = (avgSize / 2) * SCALE_FACTOR;
+
+            // Apply reasonable bounds:
+            // Minimum: 5px (~0.3cm diameter) for visibility
+            // Maximum: 80px (~5.3cm diameter) - realistic maximum for breast lump display
+            // Note: Values >10cm are likely data entry errors (e.g., 40mm entered as 40cm)
+            markerRadius = Math.max(5, Math.min(80, calculatedRadius));
+
+            console.log('Parsed size:', avgSize, 'cm, Calculated radius:', calculatedRadius.toFixed(1), 'px, Applied radius:', markerRadius, 'px');
+        } else {
+            markerRadius = 15; // Default if parsing fails
+        }
+
+        // Redraw canvas with new size
+        if (canvasInitialized) {
+            drawCanvas();
+        }
+    }
+
+    function handleCanvasClick(event) {
+        // Only allow clicks when annotation is enabled (benjolan Ya is selected)
+        const benjolanYa = document.getElementById('benjolan_ya');
+        if (!benjolanYa || !benjolanYa.checked) {
+            return; // Canvas is view-only
+        }
+
+        if (selectedMarkerTypes.length === 0) {
+            alert('Silakan pilih Bentuk Kelainan terlebih dahulu!');
+            return;
+        }
+
+        const rect = canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+
+        // Add marker for each selected type
+        selectedMarkerTypes.forEach(type => {
+            markers.push({ x, y, type });
+        });
+
+        drawCanvas();
+        saveAbnormalityImage();
+    }
+
+    function drawCanvas() {
+        if (!ctx || !img) return;
+
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw the breast image
+        const scale = Math.min(canvas.width / img.width, canvas.height / img.height);
+        const x = (canvas.width / 2) - (img.width / 2) * scale;
+        const y = (canvas.height / 2) - (img.height / 2) * scale;
+        ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+
+        // Draw all markers
+        markers.forEach(marker => {
+            drawMarker(marker.x, marker.y, marker.type);
+        });
+    }
+
+    function drawMarker(x, y, type) {
+        const radius = markerRadius;
+
+        ctx.save();
+        ctx.lineWidth = 2.5;
+
+        switch(type) {
+            case 'keras': // Filled black circle
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, 2 * Math.PI);
+                ctx.fillStyle = 'black';
+                ctx.strokeStyle = 'black';
+                ctx.fill();
+                ctx.stroke();
+                break;
+
+            case 'kenyal': // Circle with diagonal stripes (hatched)
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, 2 * Math.PI);
+                ctx.fillStyle = 'white';
+                ctx.strokeStyle = 'black';
+                ctx.fill();
+                ctx.stroke();
+
+                // Create diagonal stripe pattern
+                ctx.save();
+                ctx.clip();
+                ctx.beginPath();
+                // Denser hatching
+                for (let i = -radius * 2; i < radius * 2; i += 4) {
+                    ctx.moveTo(x + i - radius, y - radius);
+                    ctx.lineTo(x + i + radius, y + radius);
+                }
+                ctx.strokeStyle = 'black';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+                ctx.restore();
+                break;
+
+            case 'bergerak': // Empty circle
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, 2 * Math.PI);
+                ctx.fillStyle = 'white';
+                ctx.fill();
+                ctx.lineWidth = 3; // Ensure visible stroke width
+                ctx.strokeStyle = 'black'; // Explicitly set stroke color
+                ctx.stroke();
+                break;
+
+            case 'tidak_bergerak': // Circle with X
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, 2 * Math.PI);
+                ctx.fillStyle = 'white';
+                ctx.fill();
+                ctx.lineWidth = 3; // Ensure visible stroke width
+                ctx.strokeStyle = 'black'; // Explicitly set stroke color
+                ctx.stroke();
+                
+                // Draw X
+                ctx.beginPath();
+                ctx.moveTo(x - radius * 0.7, y - radius * 0.7);
+                ctx.lineTo(x + radius * 0.7, y + radius * 0.7);
+                ctx.moveTo(x + radius * 0.7, y - radius * 0.7);
+                ctx.lineTo(x - radius * 0.7, y + radius * 0.7);
+                ctx.lineWidth = 3; // Ensure visible stroke width for X
+                ctx.strokeStyle = 'black'; // Re-affirm stroke color
+                ctx.stroke();
+                break;
+        }
+
+        ctx.restore();
+    }
+
+    function clearAnnotations() {
+        markers = [];
+        if (canvas) {
+            drawCanvas();
+        }
+        const abnormalityInput = document.getElementById('abnormality_image');
+        if (abnormalityInput) {
+            abnormalityInput.value = '';
+        }
+    }
+
+    function undoLastMark() {
+        if (markers.length > 0) {
+            markers.pop();
+            drawCanvas();
+            saveAbnormalityImage();
+        }
+    }
+
+    function saveAbnormalityImage() {
+        if (canvas) {
+            const dataURL = canvas.toDataURL('image/png');
+            document.getElementById('abnormality_image').value = dataURL;
         }
     }
 </script>

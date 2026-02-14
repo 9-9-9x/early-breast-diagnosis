@@ -47,24 +47,28 @@
             @endif
 
             {{-- KOTAK PERHATIAN BAWAH (DINAMIS) --}}
-            <div class="w-full p-8 rounded-2xl border border-black">
-                <h3 class="text-3xl md:text-4xl font-semibold text-center text-red-500 mb-6">
-                    Perhatian!
-                </h3>
-
-                @if ($isBerisiko)
-                    {{-- Teks Perhatian untuk yang BERISIKO --}}
-                    <div class="text-center text-xl text-black space-y-2">
+            @if ($isBerisiko)
+                {{-- Kotak dengan background merah untuk BERISIKO (explicit hex) --}}
+                <div class="w-full p-8 rounded-2xl" style="background-color: #dc2626; border: 2px solid #b91c1c;">
+                    <h3 class="text-3xl md:text-4xl font-semibold text-center text-white mb-6">
+                        Perhatian!
+                    </h3>
+                    <div class="text-center text-xl text-white space-y-2">
                         <p>Anda akan dirujuk untuk melakukan pemeriksaan lanjutan di Puskesmas Pakusari.</p>
                         <p>Diharapkan bersedia hadir apabila dihubungi oleh pihak Puskesmas Pakusari untuk kelancaran proses pemeriksaan dan penanganan lebih lanjut.</p>
                     </div>
-                @else
-                    {{-- Teks Perhatian untuk yang TIDAK BERISIKO --}}
+                </div>
+            @else
+                {{-- Kotak dengan border hitam untuk TIDAK BERISIKO --}}
+                <div class="w-full p-8 rounded-2xl border border-black">
+                    <h3 class="text-3xl md:text-4xl font-semibold text-center text-red-500 mb-6">
+                        Perhatian!
+                    </h3>
                     <div class="text-center text-xl text-black space-y-2">
                         <p>Masyarakat dihimbau untuk tetap menjaga kesehatan dan pola makan yang seimbang, serta melakukan SADARI secara rutin.</p>
                     </div>
-                @endif
-            </div>
+                </div>
+            @endif
         </div>
 
         {{-- Action Buttons (di dalam card) --}}

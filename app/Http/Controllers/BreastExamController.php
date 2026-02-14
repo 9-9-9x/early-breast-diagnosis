@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class BreastExamController extends Controller
 {
@@ -67,8 +69,8 @@ class BreastExamController extends Controller
         $validatedData = $request->validate([
             'user_id' => 'required|exists:users,id',
             // Payudara Kanan/Kiri
-            'payudara_kanan' => 'nullable|boolean',
-            'payudara_kiri' => 'nullable|boolean',
+            'payudara_kanan' => 'nullable|in:0,1',
+            'payudara_kiri' => 'nullable|in:0,1',
             // Validasi checkbox untuk Kulit
             'kulit_normal' => 'nullable|boolean',
             'kulit_abnormal' => 'nullable|boolean',
@@ -81,12 +83,22 @@ class BreastExamController extends Controller
             'retraksi' => 'nullable|boolean',
             'luka_basah_areola' => 'nullable|boolean',
             'cairan_abnormal' => 'nullable|boolean',
-            // Benjolan
-            'benjolan_radio' => 'required|string|max:10|in:ya,tidak',
+            // Benjolan - required only when breast is selected
+            'benjolan_radio' => [
+                Rule::requiredIf(function () use ($request) {
+                    return $request->input('payudara_kanan') == '1' || $request->input('payudara_kiri') == '1';
+                }),
+                'nullable',
+                'string',
+                'max:10',
+                Rule::in(['ya', 'tidak'])
+            ],
             'benjolan_ukuran' => 'nullable|string|max:50',
             // Bentuk Kelainan
             'kelainan' => 'nullable|array',
             'kelainan.*' => 'string|max:255|in:kenyal,keras,bergerak,tidak_bergerak',
+            // Abnormality Image
+            'abnormality_image' => 'nullable|string',
         ]);
 
         $user = User::findOrFail($request->input('user_id'));
@@ -104,10 +116,10 @@ class BreastExamController extends Controller
 
         // Lokasi Payudara (pd kanan / pd kiri)
         $lokasi = [];
-        if ($request->has('payudara_kanan')) {
+        if ($request->input('payudara_kanan') == '1') {
             $lokasi[] = 'pd kanan';
         }
-        if ($request->has('payudara_kiri')) {
+        if ($request->input('payudara_kiri') == '1') {
             $lokasi[] = 'pd kiri';
         }
         if (!empty($lokasi)) {
@@ -131,6 +143,28 @@ class BreastExamController extends Controller
 
         $keterangan = !empty($keteranganParts) ? implode(', ', $keteranganParts) : '-';
 
+        // Handle abnormality image upload
+        $abnormalityImagePath = null;
+        if ($request->filled('abnormality_image')) {
+            try {
+                $imageData = $request->input('abnormality_image');
+                // Remove the data:image/png;base64, prefix
+                $imageData = preg_replace('/^data:image\/\w+;base64,/', '', $imageData);
+                $imageData = base64_decode($imageData);
+
+                // Create unique filename
+                $fileName = 'breast_annotated_' . $user->id . '_' . time() . '.png';
+                $filePath = 'annotated_images/' . $fileName;
+
+                // Save to storage
+                Storage::disk('public')->put($filePath, $imageData);
+                $abnormalityImagePath = $filePath;
+            } catch (\Exception $e) {
+                Log::error('Failed to save abnormality image', ['error' => $e->getMessage()]);
+                // Continue without image if upload fails
+            }
+        }
+
         // Proses data sebelum disimpan (TANPA prediction fields)
         $processedData = [
             'user_id' => $user->id,
@@ -144,10 +178,11 @@ class BreastExamController extends Controller
             'retraksi' => $request->has('retraksi'),
             'luka_basah_areola' => $request->has('luka_basah_areola'),
             'cairan_abnormal' => $request->has('cairan_abnormal'),
-            'benjolan_tidak' => $validatedData['benjolan_radio'] === 'tidak',
-            'benjolan_ya' => $validatedData['benjolan_radio'] === 'ya',
-            'benjolan_ukuran' => $validatedData['benjolan_ukuran'],
+            'benjolan_tidak' => ($validatedData['benjolan_radio'] ?? null) === 'tidak',
+            'benjolan_ya' => ($validatedData['benjolan_radio'] ?? null) === 'ya',
+            'benjolan_ukuran' => $validatedData['benjolan_ukuran'] ?? null,
             'keterangan' => $keterangan,
+            'abnormality_image' => $abnormalityImagePath,
         ];
 
         // Prepare data untuk ML Model API
