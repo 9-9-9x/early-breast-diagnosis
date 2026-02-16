@@ -52,7 +52,7 @@
 
                 @elseif ($resultType == 'jinak')
                     {{-- Tampilan untuk Hasil JINAK --}}
-                    <div class="w-full h-64 rounded-2xl flex flex-col items-center justify-center text-center" style="background-color: #eab308;">
+                    <div class="w-full h-64 rounded-2xl flex flex-col items-center justify-center text-center" style="background-color: #dc2626;">
                         <p class="text-8xl font-semibold italic text-white -mb-4">Suspect</p>
                         <p class="text-6xl font-semibold text-white">Kelainan Payudara Jinak</p>
                     </div>

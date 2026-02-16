@@ -228,8 +228,7 @@ class ReportController extends Controller
      */
     public function exportDiseasePdf(Request $request)
     {
-        // Build base query
-        $baseQuery = BreastResult::query()->with('user.patientProfile');
+        $baseQuery = BreastResult::query();
 
         if ($request->filled('periode_awal')) {
             $baseQuery->whereDate('created_at', '>=', $request->periode_awal);
@@ -243,55 +242,53 @@ class ReportController extends Controller
             });
         }
 
-        // Get all results
-        $results = $baseQuery->get();
-
-        // Age group statistics
-        $ageGroups = [
-            ['no' => 1, 'label' => 'Usia < 30 tahun', 'min' => 0, 'max' => 29],
-            ['no' => 2, 'label' => 'Usia 30-39 tahun', 'min' => 30, 'max' => 39],
-            ['no' => 3, 'label' => 'Usia 40-50 tahun', 'min' => 40, 'max' => 50],
-            ['no' => 4, 'label' => 'Usia > 50 tahun', 'min' => 51, 'max' => 999],
-        ];
+        $normalCount = (clone $baseQuery)->whereRaw('LOWER(prediction) = ?', ['normal'])->count();
+        $jinakCount = (clone $baseQuery)->whereRaw('LOWER(prediction) LIKE ?', ['%jinak%'])->count();
+        $ganasCount = (clone $baseQuery)->whereRaw('LOWER(prediction) LIKE ?', ['%ganas%'])->count();
 
         $statistics = [];
-        foreach ($ageGroups as $group) {
-            $groupResults = $results->filter(function ($result) use ($group) {
-                $age = $result->user->patientProfile->umur ?? 0;
-                return $age >= $group['min'] && $age <= $group['max'];
-            });
 
-            $normal = $groupResults->filter(function ($r) {
-                return strtolower($r->prediction) === 'normal';
-            })->count();
+        if ($request->filled('hasil')) {
+            $hasilLower = strtolower($request->hasil);
 
-            $jinak = $groupResults->filter(function ($r) {
-                return stripos($r->prediction, 'jinak') !== false;
-            })->count();
-
-            $ganas = $groupResults->filter(function ($r) {
-                return stripos($r->prediction, 'ganas') !== false;
-            })->count();
-
-            $statistics[] = [
-                'no' => $group['no'],
-                'kelompok_umur' => $group['label'],
-                'normal' => $normal,
-                'jinak' => $jinak,
-                'ganas' => $ganas,
-                'total' => $normal + $jinak + $ganas,
+            if ($hasilLower === 'normal') {
+                $statistics[] = ['no' => 1, 'hasil' => 'Normal', 'total' => $normalCount];
+            } elseif (str_contains($hasilLower, 'jinak')) {
+                $statistics[] = ['no' => 1, 'hasil' => 'Suspect Kelainan Payudara Jinak', 'total' => $jinakCount];
+            } elseif (str_contains($hasilLower, 'ganas')) {
+                $statistics[] = ['no' => 1, 'hasil' => 'Suspect Kelainan Payudara Ganas', 'total' => $ganasCount];
+            }
+        } else {
+            $statistics = [
+                ['no' => 1, 'hasil' => 'Normal', 'total' => $normalCount],
+                ['no' => 2, 'hasil' => 'Suspect Kelainan Payudara Jinak', 'total' => $jinakCount],
+                ['no' => 3, 'hasil' => 'Suspect Kelainan Payudara Ganas', 'total' => $ganasCount]
             ];
         }
 
-        // Pre-filled data
+        $bulan = '';
+        $tahun = '';
+
+        if (!empty($request->input('periode_awal'))) {
+            $tanggal = \Carbon\Carbon::parse($request->input('periode_awal'));
+            $bulan = $tanggal->locale('id')->translatedFormat('F');
+            $tahun = $tanggal->format('Y');
+        } elseif (!empty($request->input('periode_akhir'))) {
+            $tanggal = \Carbon\Carbon::parse($request->input('periode_akhir'));
+            $bulan = $tanggal->locale('id')->translatedFormat('F');
+            $tahun = $tanggal->format('Y');
+        } else {
+            $bulan = \Carbon\Carbon::now()->locale('id')->translatedFormat('F');
+            $tahun = \Carbon\Carbon::now()->format('Y');
+        }
+
         $headerData = [
             'kabupaten' => 'Jember',
             'provinsi' => 'Jawa Timur',
-            'kepala_puskesmas' => 'Dr. Dian Alfiyatul Uliyah',
+            'kepala_puskesmas' => 'dr. Dian Alfiyatul Uliyah',
             'puskesmas' => 'Pakusari',
-            'periode_awal' => $request->input('periode_awal'),
-            'periode_akhir' => $request->input('periode_akhir'),
-            'wilayah' => $request->input('wilayah'),
+            'bulan' => $bulan,
+            'tahun' => $tahun,
         ];
 
         $fileName = 'Rekapitulasi_Penyakit_' . date('YmdHis') . '.pdf';

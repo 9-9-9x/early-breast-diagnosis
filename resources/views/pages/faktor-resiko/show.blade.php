@@ -32,7 +32,7 @@
             {{-- KOTAK HASIL ATAS (DINAMIS) --}}
             @if ($isBerisiko)
                 {{-- Versi: BERISIKO --}}
-                <div class="w-full p-8 rounded-2xl bg-red-600 flex items-center justify-center">
+                <div class="w-full p-8 rounded-2xl flex items-center justify-center" style="background-color: #dc2626;">
                     <h2 class="text-4xl sm:text-5xl font-semibold text-center text-white leading-tight">
                         Berisiko Suspect Penyakit Kanker Payudara
                     </h2>

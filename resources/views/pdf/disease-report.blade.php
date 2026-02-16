@@ -160,7 +160,7 @@
             <td class="value">{{ $headerData['kabupaten'] }}</td>
             <td class="label" style="text-align: right;">Bulan</td>
             <td class="colon">:</td>
-            <td class="value"></td>
+            <td class="value">{{ $headerData['bulan'] }}</td>
         </tr>
         <tr>
             <td class="label">Provinsi</td>
@@ -168,7 +168,7 @@
             <td class="value">{{ $headerData['provinsi'] }}</td>
             <td class="label" style="text-align: right;">Tahun</td>
             <td class="colon">:</td>
-            <td class="value"></td>
+            <td class="value">{{ $headerData['tahun'] }}</td>
         </tr>
     </table>
 
@@ -176,45 +176,27 @@
     <table class="data-table">
         <thead>
             <tr>
-                <th rowspan="2" style="width: 40px;">No</th>
-                <th rowspan="2" style="width: 150px;">Kelompok Umur</th>
-                <th colspan="3">Hasil Pemeriksaan Payudara</th>
-                <th rowspan="2" style="width: 60px;">Total</th>
-            </tr>
-            <tr>
-                <th style="width: 80px;">Normal</th>
-                <th style="width: 130px;"><i>Suspect</i> Kelainan<br>Payudara Jinak</th>
-                <th style="width: 130px;"><i>Suspect</i> Kelainan<br>Payudara Ganas</th>
+                <th style="width: 40px;">No</th>
+                <th style="width: 200px;">Hasil Pemeriksaan Payudara</th>
+                <th style="width: 80px;">Total</th>
             </tr>
         </thead>
         <tbody>
             @php
-                $totalNormal = 0;
-                $totalJinak = 0;
-                $totalGanas = 0;
                 $totalAll = 0;
             @endphp
             @foreach($statistics as $stat)
             <tr>
                 <td>{{ $stat['no'] }}</td>
-                <td class="text-left">{{ $stat['kelompok_umur'] }}</td>
-                <td>{{ $stat['normal'] }}</td>
-                <td>{{ $stat['jinak'] }}</td>
-                <td>{{ $stat['ganas'] }}</td>
+                <td class="text-left">{{ $stat['hasil'] }}</td>
                 <td>{{ $stat['total'] }}</td>
             </tr>
             @php
-                $totalNormal += $stat['normal'];
-                $totalJinak += $stat['jinak'];
-                $totalGanas += $stat['ganas'];
                 $totalAll += $stat['total'];
             @endphp
             @endforeach
             <tr class="footer-total">
-                <td colspan="2">Total</td>
-                <td>{{ $totalNormal }}</td>
-                <td>{{ $totalJinak }}</td>
-                <td>{{ $totalGanas }}</td>
+                <td colspan="2">Total Keseluruhan</td>
                 <td>{{ $totalAll }}</td>
             </tr>
         </tbody>
