@@ -205,8 +205,8 @@
     <!-- Signature -->
     <div class="signature">
         <p class="date">Jember, ... / ... / 20....</p>
-        <p>Kepala Puskesmas</p>
         <br><br><br>
+        <p>Kepala Puskesmas</p>
         <p class="name">( {{ $headerData['kepala_puskesmas'] }} )</p>
         <p>NIP. 198602132014122001</p>
     </div>
