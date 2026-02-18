@@ -176,9 +176,9 @@
     <table class="data-table">
         <thead>
             <tr>
-                <th style="width: 40px;">No</th>
-                <th style="width: 200px;">Hasil Pemeriksaan Payudara</th>
-                <th style="width: 80px;">Total</th>
+                <th style="width: 5%;">No</th>
+                <th style="width: 75%;">Hasil Pemeriksaan Payudara</th>
+                <th style="width: 20%;">Total</th>
             </tr>
         </thead>
         <tbody>

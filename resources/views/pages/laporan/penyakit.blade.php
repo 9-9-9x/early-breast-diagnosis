@@ -25,8 +25,7 @@
                             <div class="relative w-full">
                                 <input type="date" name="periode_awal" id="periode_awal"
                                     value="{{ request('periode_awal') }}"
-                                    style="appearance: none; -webkit-appearance: none; -moz-appearance: none;"
-                                    class="w-full h-12 pl-4 pr-4 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947] [&::-webkit-calendar-picker-indicator]:hidden">
+                                    class="w-full h-12 pl-4 pr-4 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947]">
                             </div>
                         </div>
 
@@ -36,8 +35,7 @@
                             <div class="relative w-full">
                                 <input type="date" name="periode_akhir" id="periode_akhir"
                                     value="{{ request('periode_akhir') }}"
-                                    style="appearance: none; -webkit-appearance: none; -moz-appearance: none;"
-                                    class="w-full h-12 pl-4 pr-4 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947] [&::-webkit-calendar-picker-indicator]:hidden">
+                                    class="w-full h-12 pl-4 pr-4 text-lg border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85a947]">
                             </div>
                         </div>
 
@@ -217,7 +215,8 @@
 
             // Function to load data
             function loadData() {
-                const formData = new FormData(filterForm);
+                const currentForm = document.getElementById('filterForm');
+                const formData = new FormData(currentForm);
                 const params = new URLSearchParams();
                 params.append('type', 'penyakit');
 
@@ -257,7 +256,8 @@
 
             // Export to Excel function
             window.exportToExcel = function() {
-                const formData = new FormData(filterForm);
+                const currentForm = document.getElementById('filterForm');
+                const formData = new FormData(currentForm);
                 const params = new URLSearchParams();
 
                 for (let [key, value] of formData.entries()) {
@@ -271,7 +271,8 @@
 
             // Export to PDF function
             window.exportToPdf = function() {
-                const formData = new FormData(filterForm);
+                const currentForm = document.getElementById('filterForm');
+                const formData = new FormData(currentForm);
                 const params = new URLSearchParams();
 
                 for (let [key, value] of formData.entries()) {
