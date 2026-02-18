@@ -228,42 +228,59 @@ class ReportController extends Controller
      */
     public function exportDiseasePdf(Request $request)
     {
-        $baseQuery = BreastResult::query();
+        $query = BreastResult::with(['user.patientProfile']);
 
         if ($request->filled('periode_awal')) {
-            $baseQuery->whereDate('created_at', '>=', $request->periode_awal);
+            $query->whereDate('created_at', '>=', $request->periode_awal);
         }
         if ($request->filled('periode_akhir')) {
-            $baseQuery->whereDate('created_at', '<=', $request->periode_akhir);
+            $query->whereDate('created_at', '<=', $request->periode_akhir);
         }
         if ($request->filled('wilayah')) {
-            $baseQuery->whereHas('user.patientProfile', function ($q) use ($request) {
+            $query->whereHas('user.patientProfile', function ($q) use ($request) {
                 $q->whereRaw('LOWER(desa_kelurahan) = ?', [strtolower($request->wilayah)]);
             });
         }
 
-        $normalCount = (clone $baseQuery)->whereRaw('LOWER(prediction) = ?', ['normal'])->count();
-        $jinakCount = (clone $baseQuery)->whereRaw('LOWER(prediction) LIKE ?', ['%jinak%'])->count();
-        $ganasCount = (clone $baseQuery)->whereRaw('LOWER(prediction) LIKE ?', ['%ganas%'])->count();
+        $results = $query->get();
 
-        $statistics = [];
+        // Initialize statistics structure
+        $statistics = [
+            'u30' => ['label' => 'Usia < 30 tahun', 'normal' => 0, 'jinak' => 0, 'ganas' => 0],
+            'u30_39' => ['label' => 'Usia 30-39 tahun', 'normal' => 0, 'jinak' => 0, 'ganas' => 0],
+            'u40_50' => ['label' => 'Usia 40-50 tahun', 'normal' => 0, 'jinak' => 0, 'ganas' => 0],
+            'u50' => ['label' => 'Usia > 50 tahun', 'normal' => 0, 'jinak' => 0, 'ganas' => 0],
+        ];
 
-        if ($request->filled('hasil')) {
-            $hasilLower = strtolower($request->hasil);
-
-            if ($hasilLower === 'normal') {
-                $statistics[] = ['no' => 1, 'hasil' => 'Normal', 'total' => $normalCount];
-            } elseif (str_contains($hasilLower, 'jinak')) {
-                $statistics[] = ['no' => 1, 'hasil' => 'Suspect Kelainan Payudara Jinak', 'total' => $jinakCount];
-            } elseif (str_contains($hasilLower, 'ganas')) {
-                $statistics[] = ['no' => 1, 'hasil' => 'Suspect Kelainan Payudara Ganas', 'total' => $ganasCount];
+        foreach ($results as $row) {
+            $patientProfile = $row->user->patientProfile ?? null;
+            if (!$patientProfile || !$patientProfile->tanggal_lahir) {
+                continue;
             }
-        } else {
-            $statistics = [
-                ['no' => 1, 'hasil' => 'Normal', 'total' => $normalCount],
-                ['no' => 2, 'hasil' => 'Suspect Kelainan Payudara Jinak', 'total' => $jinakCount],
-                ['no' => 3, 'hasil' => 'Suspect Kelainan Payudara Ganas', 'total' => $ganasCount]
-            ];
+
+            $age = \Carbon\Carbon::parse($patientProfile->tanggal_lahir)->age;
+            $prediction = strtolower($row->prediction);
+
+            // Determine Age Group
+            $groupKey = '';
+            if ($age < 30) {
+                $groupKey = 'u30';
+            } elseif ($age >= 30 && $age <= 39) {
+                $groupKey = 'u30_39';
+            } elseif ($age >= 40 && $age <= 50) {
+                $groupKey = 'u40_50';
+            } else {
+                $groupKey = 'u50';
+            }
+
+            // Increment Counter based on prediction
+            if ($prediction === 'normal') {
+                $statistics[$groupKey]['normal']++;
+            } elseif (str_contains($prediction, 'jinak')) {
+                $statistics[$groupKey]['jinak']++;
+            } elseif (str_contains($prediction, 'ganas')) {
+                $statistics[$groupKey]['ganas']++;
+            }
         }
 
         $bulan = '';

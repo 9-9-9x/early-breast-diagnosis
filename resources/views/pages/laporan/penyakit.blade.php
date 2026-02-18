@@ -215,8 +215,7 @@
 
             // Function to load data
             function loadData() {
-                const currentForm = document.getElementById('filterForm');
-                const formData = new FormData(currentForm);
+                const formData = new FormData(filterForm);
                 const params = new URLSearchParams();
                 params.append('type', 'penyakit');
 
@@ -256,8 +255,7 @@
 
             // Export to Excel function
             window.exportToExcel = function() {
-                const currentForm = document.getElementById('filterForm');
-                const formData = new FormData(currentForm);
+                const formData = new FormData(filterForm);
                 const params = new URLSearchParams();
 
                 for (let [key, value] of formData.entries()) {
@@ -271,8 +269,7 @@
 
             // Export to PDF function
             window.exportToPdf = function() {
-                const currentForm = document.getElementById('filterForm');
-                const formData = new FormData(currentForm);
+                const formData = new FormData(filterForm);
                 const params = new URLSearchParams();
 
                 for (let [key, value] of formData.entries()) {

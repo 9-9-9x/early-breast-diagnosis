@@ -176,27 +176,47 @@
     <table class="data-table">
         <thead>
             <tr>
-                <th style="width: 5%;">No</th>
-                <th style="width: 75%;">Hasil Pemeriksaan Payudara</th>
-                <th style="width: 20%;">Total</th>
+                <th rowspan="2" style="width: 30px;">No</th>
+                <th rowspan="2">Kelompok Umur</th>
+                <th colspan="3">Hasil Pemeriksaan Payudara</th>
+                <th rowspan="2" style="width: 60px;">Total</th>
+            </tr>
+            <tr>
+                <th>Normal</th>
+                <th>Suspect Kelainan<br>Payudara Jinak</th>
+                <th>Suspect Kelainan<br>Payudara Ganas</th>
             </tr>
         </thead>
         <tbody>
             @php
+                $no = 1;
+                $totalNormal = 0;
+                $totalJinak = 0;
+                $totalGanas = 0;
                 $totalAll = 0;
             @endphp
             @foreach($statistics as $stat)
-            <tr>
-                <td>{{ $stat['no'] }}</td>
-                <td class="text-left">{{ $stat['hasil'] }}</td>
-                <td>{{ $stat['total'] }}</td>
-            </tr>
-            @php
-                $totalAll += $stat['total'];
-            @endphp
+                @php
+                    $rowTotal = $stat['normal'] + $stat['jinak'] + $stat['ganas'];
+                    $totalNormal += $stat['normal'];
+                    $totalJinak += $stat['jinak'];
+                    $totalGanas += $stat['ganas'];
+                    $totalAll += $rowTotal;
+                @endphp
+                <tr>
+                    <td>{{ $no++ }}</td>
+                    <td class="text-left">{{ $stat['label'] }}</td>
+                    <td>{{ $stat['normal'] }}</td>
+                    <td>{{ $stat['jinak'] }}</td>
+                    <td>{{ $stat['ganas'] }}</td>
+                    <td>{{ $rowTotal }}</td>
+                </tr>
             @endforeach
             <tr class="footer-total">
-                <td colspan="2">Total Keseluruhan</td>
+                <td colspan="2">Total</td>
+                <td>{{ $totalNormal }}</td>
+                <td>{{ $totalJinak }}</td>
+                <td>{{ $totalGanas }}</td>
                 <td>{{ $totalAll }}</td>
             </tr>
         </tbody>
